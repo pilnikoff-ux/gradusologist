@@ -1,0 +1,7 @@
+{
+  "name": "Градусолог | Gradusologist",
+  "description": "Інтерактивний гід градусів, енциклопедія алкоголю, генератор коктейлів та тостів, психологія вибору, похмільний гід, калькулятор проміле та рулетка розваг.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
