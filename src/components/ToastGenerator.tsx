@@ -77,17 +77,37 @@ export const ToastGenerator: React.FC<Props> = ({ language }) => {
 
       setActiveToast(normalizedToast);
     } catch {
-      // Find matching offline toast
-      const match = TOASTS_DATABASE.find((t) => t.occasion === selectedOccasion) || TOASTS_DATABASE[0];
-      setActiveToast(match);
+      // Find matching offline toasts for occasion and tone
+      const matchingToasts = TOASTS_DATABASE.filter(
+        (t) => t.occasion === selectedOccasion && (selectedTone ? t.tone === selectedTone : true)
+      );
+      const fallbackList = matchingToasts.length > 0
+        ? matchingToasts
+        : TOASTS_DATABASE.filter((t) => t.occasion === selectedOccasion);
+
+      const pool = fallbackList.length > 0 ? fallbackList : TOASTS_DATABASE;
+      const randomPick = pool[Math.floor(Math.random() * pool.length)];
+      setActiveToast(randomPick);
     } finally {
       setIsGenerating(false);
       playClinkSound();
     }
   };
 
+  const handleNextRandomFromCategory = () => {
+    playClinkSound();
+    const matching = TOASTS_DATABASE.filter((t) => t.occasion === selectedOccasion);
+    const pool = matching.length > 0 ? matching : TOASTS_DATABASE;
+    // pick one that is not current
+    const remaining = pool.filter((t) => t.id !== activeToast.id);
+    const next = remaining.length > 0 ? remaining[Math.floor(Math.random() * remaining.length)] : pool[0];
+    setActiveToast(next);
+  };
+
   const handleCopy = () => {
-    const text = `🥂 ${activeToast.title}\n\n${activeToast.text}\n\n👉 ${activeToast.punchline}\n(Напій: ${activeToast.suggestedDrink || 'Улюблений келих'})`;
+    const text = isUa
+      ? `🥂 ${activeToast.title}\n\n${activeToast.text}\n\n👉 ${activeToast.punchline}\n(Напій: ${activeToast.suggestedDrink || 'Улюблений келих'})`
+      : `🥂 ${activeToast.titleEn || activeToast.title}\n\n${activeToast.textEn || activeToast.text}\n\n👉 ${activeToast.punchlineEn || activeToast.punchline}\n(Drink: ${activeToast.suggestedDrinkEn || activeToast.suggestedDrink || 'Your favorite glass'})`;
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -173,21 +193,30 @@ export const ToastGenerator: React.FC<Props> = ({ language }) => {
           </div>
         </div>
 
-        {/* Generate Button */}
-        <button
-          onClick={handleGenerate}
-          disabled={isGenerating}
-          className="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 hover:brightness-110 text-stone-950 font-bold font-['Unbounded'] text-sm sm:text-base flex items-center justify-center gap-3 transition-all shadow-lg shadow-amber-500/20 active:scale-95 disabled:opacity-50"
-        >
-          <Sparkles className={`w-5 h-5 ${isGenerating ? 'animate-spin' : ''}`} />
-          {isGenerating
-            ? isUa ? 'ШІ складає красномовний тост...' : 'AI crafting words...'
-            : isUa ? 'Згенерувати Авторський Тост' : 'Generate Toast'}
-        </button>
+        {/* Generate and Browse Buttons */}
+        <div className="flex flex-col sm:flex-row gap-3">
+          <button
+            onClick={handleGenerate}
+            disabled={isGenerating}
+            className="flex-1 py-3.5 px-6 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 hover:brightness-110 text-stone-950 font-bold font-['Unbounded'] text-sm sm:text-base flex items-center justify-center gap-3 transition-all shadow-lg shadow-amber-500/20 active:scale-95 disabled:opacity-50 cursor-pointer"
+          >
+            <Sparkles className={`w-5 h-5 ${isGenerating ? 'animate-spin' : ''}`} />
+            {isGenerating
+              ? isUa ? 'ШІ складає красномовний тост...' : 'AI crafting words...'
+              : isUa ? 'Згенерувати Авторський Тост' : 'Generate Custom Toast'}
+          </button>
+          <button
+            onClick={handleNextRandomFromCategory}
+            className="py-3.5 px-5 rounded-2xl bg-stone-800 hover:bg-stone-700 text-stone-200 border border-stone-700 font-bold font-['Unbounded'] text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md"
+          >
+            <RefreshCw className="w-4 h-4 text-amber-400" />
+            <span>{isUa ? 'Інший тост з бази' : 'Another from DB'}</span>
+          </button>
+        </div>
 
         {/* Display Active Toast Card */}
         {activeToast && (
-          <div className="p-6 sm:p-7 rounded-2xl bg-stone-950 border-2 border-amber-500/40 relative shadow-inner animate-fadeIn">
+          <div className="toast-display-card p-6 sm:p-7 rounded-2xl bg-stone-950 border-2 border-amber-500/40 relative shadow-inner animate-fadeIn">
             <div className="flex items-center justify-between mb-3 border-b border-stone-800 pb-3">
               <span className="text-xs font-bold text-amber-400 uppercase tracking-wider font-['Unbounded']">
                 {isUa ? activeToast.title : activeToast.titleEn || activeToast.title}

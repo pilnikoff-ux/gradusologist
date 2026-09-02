@@ -1567,5 +1567,57 @@ export const COCKTAILS_DATABASE: CocktailItem[] = [
     foodPairingEn: 'Fabulous with fresh garden salads, vegetarian sushi, and bruschetta.',
     idealSnacks: ['Овочеві роли з авокадо та огірком', 'Брускети з томатами та базиліком', 'Хрусткі начос з сальсою'],
     idealSnacksEn: ['Vegetable avocado sushi rolls', 'Heirloom tomato bruschetta', 'Tortilla chips with fresh salsa']
+  },
+  {
+    id: 'carpathian_spritz',
+    name: 'Карпатський Спрітц',
+    nameEn: 'Carpathian Spritz',
+    originalName: 'Carpathian Spritz',
+    type: 'long',
+    baseSpirit: 'wine',
+    abv: 11,
+    ibaOfficial: false,
+    rating: 4.96,
+    image: 'https://images.unsplash.com/photo-1560512823-829485b8bf24?auto=format&fit=crop&w=800&q=80',
+    glass: 'Винний келих (Bordeaux Glass)',
+    glassEn: 'Wine glass (Bordeaux)',
+    glassware: 'Винний келих',
+    glasswareEn: 'Wine glass',
+    method: 'build',
+    ingredients: [
+      { name: 'Настоянка на карпатських травах або бузині', nameEn: 'Carpathian herbal/elderflower infusion', amount: '45 мл', amountEn: '45 ml' },
+      { name: 'Сухе ігристе вино (Prosecco / Брют)', nameEn: 'Dry Prosecco / Sparkling Wine', amount: '90 мл', amountEn: '90 ml' },
+      { name: 'Газована мінеральна вода', nameEn: 'Sparkling mineral water', amount: '30 мл', amountEn: '30 ml' },
+      { name: 'Гілочка свіжого чебрецю або розмарину', nameEn: 'Fresh thyme or rosemary sprig', amount: '1 шт', amountEn: '1 sprig' },
+      { name: 'Слайс зеленого яблука чи огірка', nameEn: 'Green apple or cucumber ribbon', amount: '1 слайс', amountEn: '1 ribbon' }
+    ],
+    instructions: [
+      'Наповніть великий винний келих льодом до самого верху.',
+      'Влийте трав\'яну настоянку, потім обережно додайте охолоджене ігристе вино.',
+      'Долийте газовану мінеральну воду та легко підніміть барною ложкою.',
+      'Прикрасьте слайсом яблука та підпаленою гілочкою карпатського чебрецю.'
+    ],
+    instructionsEn: [
+      'Fill a generous wine goblet to the brim with ice.',
+      'Pour Carpathian herbal elixir, then gently add chilled dry Prosecco.',
+      'Splash sparkling water and lift once with a bar spoon.',
+      'Garnish with crisp apple ribbon and aromatic bruised thyme.'
+    ],
+    garnish: 'Гілочка чебрецю та слайс яблука',
+    garnishEn: 'Fresh thyme sprig & crisp green apple',
+    emotionalFit: ['zen', 'joy', 'in_love', 'tiredness'],
+    emotionalReason: 'Гірська свіжість трав та грайливі бульбашки ігристого дарують легкість і душевний підйом.',
+    emotionalReasonEn: 'Alpine botanicals and effervescent bubbles inspire lighthearted clarity and mood elevation.',
+    flavorProfile: { sweet: 3, sour: 3, bitter: 1, strong: 2, refreshing: 5, sweetness: 3, sourness: 3, bitterness: 1, strength: 2, refreshingness: 5 },
+    calories: 135,
+    caloriesApprox: 135,
+    history: 'Авторський український твіст на класичний венеціанський спрітц з використанням гірських дикоросів Карпат.',
+    historyEn: 'Ukrainian craft adaptation of the Venetian spritz incorporating wild Carpathian botanicals.',
+    foodPairing: 'Ідеально до молодого козячого сиру, брускет з печеним перцем та свіжих ягідних десертів.',
+    foodPairingEn: 'Spectacular with fresh goat cheese, roasted pepper bruschetta, and wild berries.',
+    idealSnacks: ['Брускети з козячим сиром та медом', 'В\'ялені томати з оливками', 'Карпатські сири з горіхами'],
+    idealSnacksEn: ['Goat cheese & wildflower honey crostini', 'Sun-dried tomatoes with olives', 'Artisan artisan sheep cheese']
   }
 ];
+
+

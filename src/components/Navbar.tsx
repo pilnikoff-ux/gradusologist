@@ -1,6 +1,6 @@
 import React from 'react';
 import { Language } from '../types';
-import { Wine, Dices, Brain, Sparkles, MessageSquareQuote, Heart, Trophy, HeartPulse, Utensils, Gauge, ShieldAlert, BookOpen, Flame } from 'lucide-react';
+import { Wine, Dices, Brain, Sparkles, MessageSquareQuote, Heart, Trophy, HeartPulse, Utensils, Gauge, ShieldAlert, BookOpen, Flame, Search, Sun, Moon } from 'lucide-react';
 import { playClinkSound } from '../utils/audio';
 
 interface Props {
@@ -9,6 +9,10 @@ interface Props {
   activeTab: string;
   onSelectTab: (tab: string) => void;
   journalCount: number;
+  theme: 'dark' | 'light';
+  onToggleTheme: () => void;
+  onOpenSearch: () => void;
+  onOpenJournal: () => void;
 }
 
 export const Navbar: React.FC<Props> = ({
@@ -16,7 +20,11 @@ export const Navbar: React.FC<Props> = ({
   onLanguageChange,
   activeTab,
   onSelectTab,
-  journalCount
+  journalCount,
+  theme,
+  onToggleTheme,
+  onOpenSearch,
+  onOpenJournal
 }) => {
   const isUa = language === 'uk';
 
@@ -76,14 +84,54 @@ export const Navbar: React.FC<Props> = ({
           </div>
 
           {/* Right Top Controls */}
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+            {/* Global Search Button */}
+            <button
+              onClick={() => {
+                playClinkSound();
+                onOpenSearch();
+              }}
+              className="px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/80 text-zinc-200 hover:text-amber-400 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm group"
+              title={isUa ? 'Загальний пошук (Ctrl+K)' : 'Global search'}
+            >
+              <Search className="w-3.5 h-3.5 text-amber-400 group-hover:scale-110 transition-transform" />
+              <span className="hidden sm:inline text-[11px] font-['Unbounded'] font-bold">
+                {isUa ? 'Пошук' : 'Search'}
+              </span>
+            </button>
+
+            {/* Light / Dark Theme Switcher */}
+            <button
+              onClick={() => {
+                playClinkSound();
+                onToggleTheme();
+              }}
+              className="p-2 sm:px-2.5 sm:py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/80 text-amber-400 hover:text-amber-300 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+              title={isUa ? (theme === 'dark' ? 'Увімкнути світлу тему' : 'Увімкнути темну тему') : (theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme')}
+            >
+              {theme === 'dark' ? (
+                <>
+                  <Sun className="w-4 h-4 text-amber-400 animate-spin-slow" />
+                  <span className="hidden lg:inline text-[11px] text-zinc-300 font-mono">{isUa ? 'Світла' : 'Light'}</span>
+                </>
+              ) : (
+                <>
+                  <Moon className="w-4 h-4 text-amber-400" />
+                  <span className="hidden lg:inline text-[11px] text-zinc-700 font-mono">{isUa ? 'Темна' : 'Dark'}</span>
+                </>
+              )}
+            </button>
+
             {/* My Journal Button */}
             <button
-              onClick={() => handleNavClick('generators')}
+              onClick={() => {
+                playClinkSound();
+                onOpenJournal();
+              }}
               className="bg-amber-500 hover:bg-amber-400 text-black px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl font-black text-xs flex items-center gap-1.5 shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-all cursor-pointer font-['Unbounded']"
             >
               <Sparkles className="w-3.5 h-3.5" />
-              <span>{isUa ? 'МІЙ ЖУРНАЛ' : 'MY JOURNAL'}</span>
+              <span className="hidden md:inline">{isUa ? 'МІЙ ЖУРНАЛ' : 'MY JOURNAL'}</span>
               {journalCount > 0 && (
                 <span className="bg-black text-amber-400 px-1.5 py-0.2 rounded-full text-[10px] font-mono font-black">
                   {journalCount}
@@ -97,7 +145,7 @@ export const Navbar: React.FC<Props> = ({
               className="px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-300 hover:text-white border border-rose-500/30 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
             >
               <HeartPulse className="w-3.5 h-3.5 text-rose-400" />
-              <span className="hidden sm:inline font-['Unbounded'] text-[11px]">
+              <span className="hidden xl:inline font-['Unbounded'] text-[11px]">
                 {isUa ? 'SOS Похмілля' : 'SOS Hangover'}
               </span>
             </button>

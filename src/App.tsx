@@ -16,9 +16,23 @@ import { AlcoholicTest } from './components/AlcoholicTest';
 import { FiveFactorsStop } from './components/FiveFactorsStop';
 import { AlcoholHistory } from './components/AlcoholHistory';
 import { CocktailModal } from './components/CocktailModal';
+import { GlobalSearchModal } from './components/GlobalSearchModal';
+import { MyJournalModal } from './components/MyJournalModal';
 import { ChevronUp } from 'lucide-react';
 
 export function App() {
+  // Theme (dark / light)
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    const saved = localStorage.getItem('gradusolog_theme');
+    return saved === 'light' ? 'light' : 'dark';
+  });
+
+  // Global search modal state
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  // My Journal Modal state
+  const [isJournalOpen, setIsJournalOpen] = useState(false);
+
   // Language
   const [language, setLanguage] = useState<Language>(() => {
     const saved = localStorage.getItem('gradusolog_lang');
@@ -26,6 +40,32 @@ export function App() {
   });
 
   const isUa = language === 'uk';
+
+  // Apply theme to document.body
+  useEffect(() => {
+    if (theme === 'light') {
+      document.body.classList.add('light');
+    } else {
+      document.body.classList.remove('light');
+    }
+    localStorage.setItem('gradusolog_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  };
+
+  // Keyboard shortcut Ctrl+K or Cmd+K for search
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsSearchOpen(true);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // Navigation tab
   const [activeTab, setActiveTab] = useState<string>('bento');
@@ -93,13 +133,60 @@ export function App() {
     localStorage.removeItem('gradusolog_journal');
   };
 
-  // Smooth navigation handler
+  // Smooth navigation handler with multi-id fallback
   const handleNavigate = (sectionId: string) => {
     setActiveTab(sectionId);
-    const el = document.getElementById(`${sectionId}-section`);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
+    if (sectionId === 'bento' || sectionId === 'home') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
     }
+    const targetIds = [
+      `${sectionId}-section`,
+      sectionId,
+      sectionId === 'pairings' ? 'food-pairings-section' : '',
+      sectionId === 'bac' ? 'bac-calculator-section' : '',
+      sectionId === 'test' ? 'alcoholic-test-section' : '',
+      sectionId === 'fiveFactors' ? 'five-factors-section' : '',
+      sectionId === 'dating' ? 'dating-psychology-section' : '',
+    ].filter(Boolean);
+
+    for (const tid of targetIds) {
+      const el = document.getElementById(tid);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        break;
+      }
+    }
+  };
+
+  // Browser back button handler to close modals instead of jumping to top
+  useEffect(() => {
+    const handlePopState = () => {
+      if (modalCocktail) {
+        setModalCocktail(null);
+      } else if (isJournalOpen) {
+        setIsJournalOpen(false);
+      } else if (isSearchOpen) {
+        setIsSearchOpen(false);
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [modalCocktail, isJournalOpen, isSearchOpen]);
+
+  const openCocktailModal = (cocktail: CocktailItem) => {
+    window.history.pushState({ modal: 'cocktail', id: cocktail.id }, '');
+    setModalCocktail(cocktail);
+  };
+
+  const openJournalModal = () => {
+    window.history.pushState({ modal: 'journal' }, '');
+    setIsJournalOpen(true);
+  };
+
+  const openSearchModal = () => {
+    window.history.pushState({ modal: 'search' }, '');
+    setIsSearchOpen(true);
   };
 
   // Scroll listener for back-to-top button
@@ -123,7 +210,11 @@ export function App() {
         onLanguageChange={handleLanguageChange}
         activeTab={activeTab}
         onSelectTab={handleNavigate}
-        journalCount={journal.length}
+        journalCount={journal.length + favorites.length}
+        theme={theme}
+        onToggleTheme={toggleTheme}
+        onOpenSearch={openSearchModal}
+        onOpenJournal={openJournalModal}
       />
 
       {/* Main Container */}
@@ -133,7 +224,7 @@ export function App() {
           language={language}
           onLanguageChange={handleLanguageChange}
           onNavigate={handleNavigate}
-          journalCount={journal.length}
+          journalCount={journal.length + favorites.length}
           onQuickEmotionPick={(emotion) => {
             const btn = document.getElementById(`emotion-btn-${emotion}`);
             if (btn) btn.click();
@@ -146,6 +237,7 @@ export function App() {
             const btn = document.getElementById('surprise-generator-btn');
             if (btn) btn.click();
           }}
+          onOpenJournal={openJournalModal}
         />
 
         {/* 1. Interactive Roulette with 17 options */}
@@ -154,18 +246,18 @@ export function App() {
         {/* 2. Neuro-Mixology Emotional Bar */}
         <EmotionalBar
           language={language}
-          onOpenCocktailModal={(c) => {
-            setModalCocktail(c);
-          }}
+          onOpenCocktailModal={openCocktailModal}
         />
 
         {/* 3. Surprise Generators ("Мене той во" & "Це пиздець" with journal) */}
         <SurpriseGenerators
           language={language}
+          onOpenCocktailModal={openCocktailModal}
           journal={journal}
           onSaveToJournal={handleSaveToJournal}
           onDeleteFromJournal={handleDeleteFromJournal}
           onClearJournal={handleClearJournal}
+          onOpenFullJournal={openJournalModal}
         />
 
         {/* 4. Full Cocktail Catalog & Recipes */}
@@ -173,14 +265,13 @@ export function App() {
           language={language}
           favorites={favorites}
           onToggleFavorite={handleToggleFavorite}
+          onOpenCocktailModal={openCocktailModal}
         />
 
         {/* 5. Top 10 World Cocktails */}
         <Top10Cocktails
           language={language}
-          onOpenCocktailModal={(c) => {
-            setModalCocktail(c);
-          }}
+          onOpenCocktailModal={openCocktailModal}
         />
 
         {/* 6. Toast Generator (By occasion & author) */}
@@ -219,12 +310,47 @@ export function App() {
         />
       )}
 
+      {/* Omnisearch Global Modal */}
+      <GlobalSearchModal
+        language={language}
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        onSelectCocktail={(c) => {
+          setModalCocktail(c);
+        }}
+        onNavigateSection={(secId) => {
+          handleNavigate(secId);
+        }}
+      />
+
+      {/* My Journal & Favorites Modal */}
+      <MyJournalModal
+        language={language}
+        isOpen={isJournalOpen}
+        onClose={() => setIsJournalOpen(false)}
+        favorites={favorites}
+        onToggleFavorite={handleToggleFavorite}
+        onClearFavorites={() => {
+          setFavorites([]);
+          localStorage.removeItem('gradusolog_favs');
+        }}
+        journal={journal}
+        onDeleteFromJournal={handleDeleteFromJournal}
+        onClearJournal={handleClearJournal}
+        onOpenCocktailModal={(c) => {
+          setModalCocktail(c);
+        }}
+        onOpenGeneratorTab={() => {
+          handleNavigate('generators');
+        }}
+      />
+
       {/* Back to Top Floating Button */}
       {showScrollTop && (
         <button
           onClick={scrollToTop}
           className="fixed bottom-6 right-6 p-3.5 rounded-2xl bg-amber-500 text-black font-black shadow-[0_0_20px_rgba(245,158,11,0.4)] hover:bg-amber-400 hover:scale-110 active:scale-95 transition-all z-40 cursor-pointer"
-          title="Вгору"
+          title={isUa ? 'Вгору' : 'Scroll to top'}
         >
           <ChevronUp className="w-5 h-5" />
         </button>

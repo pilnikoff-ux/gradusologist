@@ -3,7 +3,9 @@ import { ROULETTE_OPTIONS } from '../data/rouletteOptions';
 import { RouletteOption, Language } from '../types';
 import { playTickSound, playWinSound } from '../utils/audio';
 import confetti from 'canvas-confetti';
-import { Dices, Sparkles, RefreshCw, Volume2, ShieldAlert, CheckCircle2, X } from 'lucide-react';
+import { Dices, Sparkles, RefreshCw, Volume2, ShieldAlert, CheckCircle2, X, Radio, Music } from 'lucide-react';
+import { Retro80sPlayerWidget } from './Retro80sPlayerWidget';
+import { start80sMusic, stop80sMusic } from '../utils/retro80sPlayer';
 
 interface Props {
   language: Language;
@@ -279,10 +281,10 @@ export const InteractiveRoulette: React.FC<Props> = ({ language }) => {
             {selectedOption ? (
               <div className="space-y-3 animate-fadeIn">
                 <div
-                  className="p-3 rounded-xl border text-white font-bold text-base"
-                  style={{ backgroundColor: `${selectedOption.color}25`, borderColor: selectedOption.color }}
+                  className="keep-dark p-3 rounded-xl border text-white font-bold text-base shadow-sm"
+                  style={{ backgroundColor: `${selectedOption.color}35`, borderColor: selectedOption.color }}
                 >
-                  <div className="text-xs uppercase tracking-wider opacity-80 mb-1">
+                  <div className="text-xs uppercase tracking-wider opacity-90 mb-1 font-mono">
                     {isUa ? selectedOption.badge : selectedOption.badgeEn}
                   </div>
                   {isUa ? selectedOption.textUa : selectedOption.textEn}
@@ -290,12 +292,20 @@ export const InteractiveRoulette: React.FC<Props> = ({ language }) => {
                 <p className="text-xs text-stone-300 leading-relaxed">
                   {isUa ? selectedOption.adviceUa : selectedOption.adviceEn}
                 </p>
-                <div className="pt-2 border-t border-stone-800 flex justify-end">
+                {(selectedOption.index === 14 || selectedOption.textUa.includes('80х')) && (
+                  <div className="pt-2 border-t border-stone-800">
+                    <Retro80sPlayerWidget language={language} compact={true} />
+                  </div>
+                )}
+                <div className="pt-2 border-t border-stone-800 flex justify-between items-center">
+                  <span className="text-[11px] text-stone-400">
+                    {isUa ? 'Повний опис кроку' : 'Full step guide'}
+                  </span>
                   <button
                     onClick={() => setShowResultModal(true)}
                     className="text-xs text-amber-400 hover:text-amber-300 font-semibold underline underline-offset-2"
                   >
-                    {isUa ? 'Читати повну інструкцію →' : 'Read full instruction →'}
+                    {isUa ? 'Відкрити інструкцію →' : 'Open instruction →'}
                   </button>
                 </div>
               </div>
@@ -319,7 +329,7 @@ export const InteractiveRoulette: React.FC<Props> = ({ language }) => {
                   key={opt.index}
                   className={`px-2.5 py-1.5 rounded-lg text-xs flex items-center justify-between border transition-colors ${
                     selectedOption?.index === opt.index
-                      ? 'bg-amber-500/20 border-amber-400 text-amber-200'
+                      ? 'bg-amber-500/20 border-amber-500 text-amber-500 font-bold'
                       : 'bg-stone-950/60 border-stone-800/60 text-stone-400 hover:border-stone-700'
                   }`}
                 >
@@ -371,7 +381,7 @@ export const InteractiveRoulette: React.FC<Props> = ({ language }) => {
             </h3>
 
             {/* Tactical Advice */}
-            <div className="p-4 rounded-2xl bg-stone-950/80 border border-stone-800 space-y-3 mb-6">
+            <div className="p-4 rounded-2xl bg-stone-950/80 border border-stone-800 space-y-3 mb-4">
               <div className="flex items-start gap-2.5 text-stone-300 text-sm leading-relaxed">
                 <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
                 <div>
@@ -386,10 +396,17 @@ export const InteractiveRoulette: React.FC<Props> = ({ language }) => {
                 <Volume2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                 <div>
                   <span className="text-stone-400 font-medium">{isUa ? 'Рекомендована дія / трек: ' : 'Suggested action / track: '}</span>
-                  <span className="text-amber-200">{isUa ? selectedOption.suggestedTrackOrActionUa : selectedOption.suggestedTrackOrActionEn}</span>
+                  <span className="text-amber-200 font-bold">{isUa ? selectedOption.suggestedTrackOrActionUa : selectedOption.suggestedTrackOrActionEn}</span>
                 </div>
               </div>
             </div>
+
+            {/* 80s Music Synthesizer Widget (Direct Play for Sector 14 or manual) */}
+            {(selectedOption.index === 14 || selectedOption.textUa.includes('80х') || selectedOption.textEn.includes('80s')) && (
+              <div className="mb-4">
+                <Retro80sPlayerWidget language={language} compact={false} />
+              </div>
+            )}
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3">

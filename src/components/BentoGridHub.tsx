@@ -26,14 +26,17 @@ interface Props {
   onQuickEmotionPick: (emotionId: string) => void;
   onQuickCrazyGenerate: () => void;
   onQuickSurprise: () => void;
+  onOpenJournal: () => void;
 }
 
 export const BentoGridHub: React.FC<Props> = ({
   language,
   onNavigate,
+  journalCount,
   onQuickEmotionPick,
   onQuickCrazyGenerate,
   onQuickSurprise,
+  onOpenJournal,
 }) => {
   const isUa = language === 'uk';
 
@@ -98,7 +101,7 @@ export const BentoGridHub: React.FC<Props> = ({
         </div>
 
         {/* Box 2: "CE PIZDEC" (Chaos Generator) */}
-        <div className="col-span-1 md:col-span-3 lg:col-span-3 bg-gradient-to-br from-amber-600 via-orange-700 to-red-800 rounded-2xl p-5 flex flex-col justify-between items-center text-center shadow-lg relative overflow-hidden group border border-orange-500/30 hover:border-orange-400 transition-all">
+        <div className="keep-dark col-span-1 md:col-span-3 lg:col-span-3 bg-gradient-to-br from-amber-600 via-orange-700 to-red-800 rounded-2xl p-5 flex flex-col justify-between items-center text-center shadow-lg relative overflow-hidden group border border-orange-500/30 hover:border-orange-400 transition-all">
           <div className="absolute top-2 right-2 opacity-15 group-hover:opacity-25 transition-opacity">
             <Flame className="w-20 h-20 text-black" />
           </div>
@@ -134,7 +137,7 @@ export const BentoGridHub: React.FC<Props> = ({
             onQuickSurprise();
             onNavigate('generators');
           }}
-          className="col-span-1 md:col-span-3 lg:col-span-4 bg-gradient-to-br from-zinc-900 via-zinc-900 to-amber-950/40 hover:to-amber-900/50 rounded-2xl p-5 border border-amber-500/40 hover:border-amber-400 cursor-pointer transition-all duration-300 hover:scale-[1.02] shadow-lg group relative overflow-hidden flex flex-col justify-between"
+          className="bento-surprise-card col-span-1 md:col-span-3 lg:col-span-4 bg-gradient-to-br from-zinc-900 via-zinc-900 to-amber-950/40 hover:to-amber-900/50 rounded-2xl p-5 border border-amber-500/40 hover:border-amber-400 cursor-pointer transition-all duration-300 hover:scale-[1.02] shadow-lg group relative overflow-hidden flex flex-col justify-between"
         >
           <div className="absolute -right-6 -bottom-6 w-28 h-28 bg-amber-500/10 rounded-full blur-2xl group-hover:bg-amber-500/20 transition-all pointer-events-none" />
           

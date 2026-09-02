@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { COCKTAILS_DATABASE } from '../data/cocktails';
 import { CrazyCocktail, Language, Cocktail } from '../types';
+import { generateProceduralCrazyCocktail } from '../data/crazyRecipes';
 import { Sparkles, Skull, Flame, Shuffle, BookOpen, Trash2, Check, Copy, AlertTriangle, Wine, RefreshCw } from 'lucide-react';
 import { playClinkSound, playMadnessSound } from '../utils/audio';
 
@@ -11,6 +12,7 @@ interface Props {
   onSaveToJournal: (item: CrazyCocktail) => void;
   onDeleteFromJournal: (id: string) => void;
   onClearJournal: () => void;
+  onOpenFullJournal?: () => void;
 }
 
 export const SurpriseGenerators: React.FC<Props> = ({
@@ -19,7 +21,8 @@ export const SurpriseGenerators: React.FC<Props> = ({
   journal,
   onSaveToJournal,
   onDeleteFromJournal,
-  onClearJournal
+  onClearJournal,
+  onOpenFullJournal
 }) => {
   const isUa = language === 'uk';
 
@@ -98,43 +101,8 @@ export const SurpriseGenerators: React.FC<Props> = ({
 
       setCrazyCocktail(normalizedCocktail);
     } catch {
-      // Offline fallback
-      const fallback: CrazyCocktail = {
-        id: `crazy_${Date.now()}`,
-        name: isUa ? '«Сльози Бухгалтера перед Звітом»' : '"Accountant Tears at 3 AM"',
-        tagline: isUa ? 'Коктейль, після якого 1С починає говорити латиною' : 'A concoction that makes Excel spreadsheets whisper in ancient Latin',
-        dangerLevel: 5,
-        ingredients: isUa
-          ? [
-              'Горілка перцівка домашня — 60 мл',
-              'Сльози головного бухгалтера за 4-й квартал — 3 краплі',
-              'Енергетик Red Bull — 100 мл',
-              'Подвійне еспресо без цукру — 30 мл',
-              'Гілочка розмарину (підпалена) для аромату паніки'
-            ]
-          : [
-              'Spicy pepper vodka — 60 ml',
-              'Q4 accountant tears — 3 drops',
-              'Red Bull energy potion — 100 ml',
-              'Double espresso zero sugar — 30 ml',
-              'Flaming rosemary sprig (infused with pure panic)'
-            ],
-        instructions: isUa
-          ? [
-              'Влити все у металевий термос.',
-              'Інтенсивно потрясти, заплющивши очі та згадуючи податкові перевірки.',
-              'Подавати у гранчастому стакані без соломинки.'
-            ]
-          : [
-              'Pour everything into an industrial steel thermos.',
-              'Shake violently while recalling unresolved Jira tickets.',
-              'Serve in a chipped highball with no mercy.'
-            ],
-        morningEffect: isUa
-          ? 'Повне перезавантаження особистості, здатність рахувати в умі до трильйона і непереборне бажання поїхати в Карпати пасти вівці.'
-          : 'Spontaneous ability to calculate derivatives mentally and an overwhelming urge to live off the grid as a mountain shepherd.',
-        createdAt: new Date().toISOString()
-      };
+      // Endless procedural generator fallback
+      const fallback: CrazyCocktail = generateProceduralCrazyCocktail(language);
       setCrazyCocktail(fallback);
     } finally {
       setIsLoadingCrazy(false);
@@ -145,7 +113,9 @@ export const SurpriseGenerators: React.FC<Props> = ({
     const danger = Math.min(5, Math.max(1, Number(item.dangerLevel) || 5));
     const ingredientsText = (item.ingredients || []).join('\n');
     const instructionsText = (item.instructions || []).join('\n');
-    const text = `💀 ${item.name} (${'⚡'.repeat(danger)})\n${item.tagline}\n\nІнгредієнти:\n${ingredientsText}\n\nПриготування:\n${instructionsText}\n\nРанковий ефект:\n${item.morningEffect || ''}`;
+    const text = isUa
+      ? `💀 ${item.name} (${'⚡'.repeat(danger)})\n${item.tagline}\n\nІнгредієнти:\n${ingredientsText}\n\nПриготування:\n${instructionsText}\n\nРанковий ефект:\n${item.morningEffect || ''}`
+      : `💀 ${item.name} (${'⚡'.repeat(danger)})\n${item.tagline}\n\nIngredients:\n${ingredientsText}\n\nPreparation:\n${instructionsText}\n\nMorning Effect:\n${item.morningEffect || ''}`;
     navigator.clipboard.writeText(text);
     setCopiedId(item.id);
     setTimeout(() => setCopiedId(null), 2000);
@@ -186,7 +156,7 @@ export const SurpriseGenerators: React.FC<Props> = ({
                 <span>{isUa ? 'Розумний Рандомайзер' : 'Smart Randomizer'}</span>
               </div>
               <span className="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider font-mono">
-                🍸 100% СМАЧНО
+                {isUa ? '🍸 100% СМАЧНО' : '🍸 100% DELICIOUS'}
               </span>
             </div>
             <h3 className="text-2xl sm:text-3xl font-black text-white font-['Unbounded'] mb-2">
@@ -217,7 +187,7 @@ export const SurpriseGenerators: React.FC<Props> = ({
         </div>
 
         {/* Button 2: "Це пиздець" */}
-        <div className="rounded-3xl bg-gradient-to-b from-stone-900 via-stone-900 to-stone-950 border-2 border-rose-600/50 p-6 sm:p-8 flex flex-col justify-between shadow-xl relative overflow-hidden group">
+        <div className="keep-dark rounded-3xl bg-gradient-to-b from-stone-900 via-stone-900 to-stone-950 border-2 border-rose-600/50 p-6 sm:p-8 flex flex-col justify-between shadow-xl relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none group-hover:scale-110 transition-transform">
             <Skull className="w-32 h-32 text-rose-500" />
           </div>
@@ -254,7 +224,14 @@ export const SurpriseGenerators: React.FC<Props> = ({
                 : isUa ? 'Згенерувати «Це пиздець»' : 'Brew "Total Madness"'}
             </button>
             <button
-              onClick={() => setShowJournalTab(!showJournalTab)}
+              onClick={() => {
+                playClinkSound();
+                if (onOpenFullJournal) {
+                  onOpenFullJournal();
+                } else {
+                  setShowJournalTab(!showJournalTab);
+                }
+              }}
               className="px-4 py-4 rounded-2xl bg-stone-950 border border-stone-800 text-stone-300 hover:text-amber-400 hover:border-amber-500/50 flex items-center gap-2 text-xs font-bold font-['Unbounded'] transition-colors cursor-pointer"
             >
               <BookOpen className="w-4 h-4 text-amber-400" />
@@ -474,7 +451,7 @@ export const SurpriseGenerators: React.FC<Props> = ({
                     </div>
                   </div>
                   <div className="pt-2 border-t border-stone-800 flex justify-between items-center text-[11px]">
-                    <span className="text-rose-400 font-bold">⚡ Рівень {item.dangerLevel}/5</span>
+                    <span className="text-rose-400 font-bold">⚡ {isUa ? 'Рівень' : 'Level'} {item.dangerLevel}/5</span>
                     <button
                       onClick={() => handleCopyCrazy(item)}
                       className="text-amber-400 hover:underline flex items-center gap-1"

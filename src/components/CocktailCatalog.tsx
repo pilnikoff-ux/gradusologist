@@ -1,19 +1,22 @@
 import React, { useState, useMemo } from 'react';
 import { COCKTAILS_DATABASE } from '../data/cocktails';
 import { CocktailItem, Language } from '../types';
-import { Search, Filter, Wine, Flame, Sparkles, Award, Clock, Droplets, Check, X, Share2, Heart, Utensils, Eye } from 'lucide-react';
+import { Search, Filter, Wine, Flame, Sparkles, Award, Clock, Droplets, Check, X, Share2, Heart, Utensils, Eye, Sparkle } from 'lucide-react';
 import { playClinkSound } from '../utils/audio';
+import { smartTextMatch, convertKeyboardLayout } from '../utils/searchHelper';
 import { CocktailModal } from './CocktailModal';
 
 interface Props {
   language: Language;
   onSelectCocktail?: (c: CocktailItem) => void;
+  onOpenCocktailModal?: (c: CocktailItem) => void;
   favorites: string[];
   onToggleFavorite: (id: string) => void;
 }
 
 export const CocktailCatalog: React.FC<Props> = ({
   language,
+  onOpenCocktailModal,
   favorites,
   onToggleFavorite
 }) => {
@@ -22,10 +25,20 @@ export const CocktailCatalog: React.FC<Props> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState<string>('all');
   const [selectedBase, setSelectedBase] = useState<string>('all');
+  const [selectedStrength, setSelectedStrength] = useState<string>('all');
   const [onlyTop10, setOnlyTop10] = useState(false);
   const [onlyAuthor, setOnlyAuthor] = useState(false);
+  const [onlyFavorites, setOnlyFavorites] = useState(false);
   const [activeModalCocktail, setActiveModalCocktail] = useState<CocktailItem | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const strengthOptions: { key: string; labelUa: string; labelEn: string; icon: string }[] = [
+    { key: 'all', labelUa: 'Будь-яка міцність', labelEn: 'Any ABV', icon: '🍷' },
+    { key: 'zero', labelUa: '0% Безалкогольні', labelEn: '0% Non-Alcoholic', icon: '🌿' },
+    { key: 'light', labelUa: '1–15% Легкі', labelEn: '1–15% Light', icon: '🥂' },
+    { key: 'medium', labelUa: '16–25% Середні', labelEn: '16–25% Medium', icon: '🍸' },
+    { key: 'strong', labelUa: '26%+ Міцні', labelEn: '26%+ Strong', icon: '🔥' }
+  ];
 
   const typeOptions: { key: string; labelUa: string; labelEn: string }[] = [
     { key: 'all', labelUa: 'Всі типи', labelEn: 'All Types' },
@@ -50,25 +63,26 @@ export const CocktailCatalog: React.FC<Props> = ({
     { key: 'liqueur', labelUa: 'Лікери & Біттери', labelEn: 'Liqueurs & Bitters' }
   ];
 
+  const convertedSearchLayout = useMemo(() => {
+    if (!searchQuery.trim()) return '';
+    const conv = convertKeyboardLayout(searchQuery.trim());
+    return conv !== searchQuery.trim().toLowerCase() ? conv : '';
+  }, [searchQuery]);
+
   const filteredCocktails = useMemo(() => {
     return COCKTAILS_DATABASE.filter((c) => {
-      // Search query matches name, nameEn, ingredients or food pairings
+      // Search query matches name, nameEn, ingredients, food pairings, or base spirit
       if (searchQuery.trim()) {
-        const q = searchQuery.toLowerCase().trim();
-        const matchesName =
-          (c.name && c.name.toLowerCase().includes(q)) ||
-          (c.nameEn && c.nameEn.toLowerCase().includes(q));
+        const q = searchQuery.trim();
+        const matchesName = smartTextMatch(c.name, q) || smartTextMatch(c.nameEn, q);
         const matchesIngredient = c.ingredients?.some(
-          (ing) =>
-            (ing.name && ing.name.toLowerCase().includes(q)) ||
-            (ing.nameEn && ing.nameEn.toLowerCase().includes(q))
+          (ing) => smartTextMatch(ing.name, q) || smartTextMatch(ing.nameEn, q)
         );
-        const matchesFood =
-          (c.foodPairing && c.foodPairing.toLowerCase().includes(q)) ||
-          (c.foodPairingEn && c.foodPairingEn.toLowerCase().includes(q));
-        const matchesBase = c.baseSpirit && c.baseSpirit.toLowerCase().includes(q);
+        const matchesFood = smartTextMatch(c.foodPairing, q) || smartTextMatch(c.foodPairingEn, q);
+        const matchesBase = smartTextMatch(c.baseSpirit, q);
+        const matchesDesc = smartTextMatch(c.description, q) || smartTextMatch(c.descriptionEn, q);
 
-        if (!matchesName && !matchesIngredient && !matchesFood && !matchesBase) {
+        if (!matchesName && !matchesIngredient && !matchesFood && !matchesBase && !matchesDesc) {
           return false;
         }
       }
@@ -87,6 +101,22 @@ export const CocktailCatalog: React.FC<Props> = ({
         }
       }
 
+      // Strength (ABV) filter
+      if (selectedStrength !== 'all') {
+        if (selectedStrength === 'zero' && c.abv > 0 && c.type !== 'mocktail') {
+          return false;
+        }
+        if (selectedStrength === 'light' && (c.abv <= 0 || c.abv > 15)) {
+          return false;
+        }
+        if (selectedStrength === 'medium' && (c.abv <= 15 || c.abv > 25)) {
+          return false;
+        }
+        if (selectedStrength === 'strong' && c.abv <= 25) {
+          return false;
+        }
+      }
+
       // Top 10 filter
       if (onlyTop10) {
         if (!c.isTop10 && !c.top10Rank) {
@@ -101,9 +131,16 @@ export const CocktailCatalog: React.FC<Props> = ({
         }
       }
 
+      // Favorites filter
+      if (onlyFavorites) {
+        if (!favorites.includes(c.id)) {
+          return false;
+        }
+      }
+
       return true;
     });
-  }, [searchQuery, selectedType, selectedBase, onlyTop10, onlyAuthor]);
+  }, [searchQuery, selectedType, selectedBase, selectedStrength, onlyTop10, onlyAuthor, onlyFavorites, favorites]);
 
   const handleCopyRecipe = (c: CocktailItem) => {
     const text = isUa
@@ -118,7 +155,11 @@ export const CocktailCatalog: React.FC<Props> = ({
 
   const handleOpenModal = (c: CocktailItem) => {
     playClinkSound();
-    setActiveModalCocktail(c);
+    if (onOpenCocktailModal) {
+      onOpenCocktailModal(c);
+    } else {
+      setActiveModalCocktail(c);
+    }
   };
 
   return (
@@ -145,6 +186,23 @@ export const CocktailCatalog: React.FC<Props> = ({
           <button
             onClick={() => {
               playClinkSound();
+              setOnlyFavorites(!onlyFavorites);
+            }}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold font-['Unbounded'] flex items-center gap-1.5 transition-all cursor-pointer ${
+              onlyFavorites
+                ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/20'
+                : 'bg-stone-900 text-stone-400 border border-stone-800 hover:border-stone-700'
+            }`}
+          >
+            <Heart className={`w-4 h-4 ${onlyFavorites ? 'fill-white' : 'text-rose-400'}`} />
+            <span>{isUa ? 'Улюблені' : 'Favorites'}</span>
+            <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono ${onlyFavorites ? 'bg-black/30 text-white' : 'bg-stone-800 text-stone-300'}`}>
+              {favorites.length}
+            </span>
+          </button>
+          <button
+            onClick={() => {
+              playClinkSound();
               setOnlyTop10(!onlyTop10);
             }}
             className={`px-3.5 py-2 rounded-xl text-xs font-bold font-['Unbounded'] flex items-center gap-1.5 transition-all cursor-pointer ${
@@ -163,7 +221,7 @@ export const CocktailCatalog: React.FC<Props> = ({
             }}
             className={`px-3.5 py-2 rounded-xl text-xs font-bold font-['Unbounded'] flex items-center gap-1.5 transition-all cursor-pointer ${
               onlyAuthor
-                ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/20'
+                ? 'bg-amber-400 text-stone-950 shadow-lg shadow-amber-400/20'
                 : 'bg-stone-900 text-stone-400 border border-stone-800 hover:border-stone-700'
             }`}
           >
@@ -175,15 +233,15 @@ export const CocktailCatalog: React.FC<Props> = ({
 
       {/* Filter Controls Bar */}
       <div className="space-y-4 mb-8 bg-stone-900/60 p-4 sm:p-5 rounded-2xl border border-stone-800 shadow-md">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {/* Search Input */}
-          <div className="relative md:col-span-1">
+          <div className="relative">
             <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={isUa ? 'Пошук за назвою чи інгредієнтом...' : 'Search by name or ingredient...'}
+              placeholder={isUa ? 'Пошук: назва, інгредієнт...' : 'Search: name, ingredient...'}
               className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-stone-950 border border-stone-800 text-stone-200 placeholder-stone-500 text-sm focus:outline-none focus:border-amber-500 transition-colors"
             />
             {searchQuery && (
@@ -194,6 +252,33 @@ export const CocktailCatalog: React.FC<Props> = ({
                 ✕
               </button>
             )}
+            {convertedSearchLayout && (
+              <div className="absolute left-0 -bottom-5 text-[10px] text-amber-400 font-mono flex items-center gap-1">
+                <span>🔄 {isUa ? 'Шукаємо також:' : 'Also searching:'}</span>
+                <span className="font-bold underline">{convertedSearchLayout}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Strength (ABV) Select */}
+          <div className="relative">
+            <select
+              value={selectedStrength}
+              onChange={(e) => {
+                playClinkSound();
+                setSelectedStrength(e.target.value);
+              }}
+              className="w-full px-4 py-2.5 rounded-xl bg-stone-950 border border-amber-500/30 text-amber-300 text-sm focus:outline-none focus:border-amber-500 appearance-none cursor-pointer font-medium"
+            >
+              {strengthOptions.map((opt) => (
+                <option key={opt.key} value={opt.key}>
+                  {opt.icon} {isUa ? opt.labelUa : opt.labelEn}
+                </option>
+              ))}
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-amber-400">
+              ▼
+            </div>
           </div>
 
           {/* Type Select */}
@@ -239,6 +324,31 @@ export const CocktailCatalog: React.FC<Props> = ({
           </div>
         </div>
 
+        {/* Strength ABV Quick Chips Row */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 border-t border-stone-800/60 scrollbar-none">
+          <span className="text-xs text-amber-400 font-bold uppercase tracking-wider shrink-0 flex items-center gap-1">
+            <Flame className="w-3 h-3 text-amber-400" />
+            {isUa ? 'Міцність:' : 'Strength:'}
+          </span>
+          {strengthOptions.map((opt) => (
+            <button
+              key={opt.key}
+              onClick={() => {
+                playClinkSound();
+                setSelectedStrength(opt.key);
+              }}
+              className={`px-3 py-1 rounded-lg text-xs whitespace-nowrap transition-colors cursor-pointer flex items-center gap-1.5 ${
+                selectedStrength === opt.key
+                  ? 'bg-amber-500 text-stone-950 font-bold shadow-md shadow-amber-500/20'
+                  : 'bg-stone-950 text-stone-300 hover:text-amber-300 border border-stone-800'
+              }`}
+            >
+              <span>{opt.icon}</span>
+              <span>{isUa ? opt.labelUa : opt.labelEn}</span>
+            </button>
+          ))}
+        </div>
+
         {/* Quick Horizontal Type Chips */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
           <span className="text-xs text-stone-400 font-semibold uppercase tracking-wider shrink-0 flex items-center gap-1">
@@ -277,6 +387,7 @@ export const CocktailCatalog: React.FC<Props> = ({
               setSearchQuery('');
               setSelectedType('all');
               setSelectedBase('all');
+              setSelectedStrength('all');
               setOnlyTop10(false);
               setOnlyAuthor(false);
             }}

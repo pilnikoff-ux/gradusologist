@@ -5,10 +5,323 @@
     background-color: #0F0F12;
     color: #F4F4F5;
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  body.light {
+    background-color: #F8FAFC;
+    color: #0F172A;
   }
 }
 
-/* Bento Grid custom scrollbar & utility classes */
+/* ==========================================================
+   GRADUSOLOGIST LIGHT THEME ARCHITECTURE & OPTICAL CONTRAST
+   ========================================================== */
+
+/* 1. Body & Main Canvas */
+body.light,
+body.light #root,
+body.light .bg-\[\#0F0F12\] {
+  background-color: #F8FAFC !important;
+  color: #0F172A !important;
+}
+
+/* 2. Primary Card Containers (Elevated White Surfaces) */
+body.light .bg-stone-900,
+body.light .bg-zinc-900,
+body.light .bg-stone-900\/90,
+body.light .bg-zinc-900\/90,
+body.light .bg-stone-900\/80,
+body.light .bg-zinc-900\/80,
+body.light .bg-stone-900\/60,
+body.light .bg-zinc-900\/60,
+body.light .bg-stone-900\/40,
+body.light .bg-zinc-900\/40,
+body.light .bg-stone-900\/20,
+body.light .bg-zinc-900\/20 {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.03);
+}
+
+/* 3. Secondary Surfaces & Recessed Containers */
+body.light .bg-stone-950,
+body.light .bg-zinc-950,
+body.light .bg-stone-950\/90,
+body.light .bg-zinc-950\/90,
+body.light .bg-stone-950\/80,
+body.light .bg-zinc-950\/80,
+body.light .bg-stone-800,
+body.light .bg-zinc-800,
+body.light .bg-stone-800\/90,
+body.light .bg-zinc-800\/90,
+body.light .bg-stone-800\/80,
+body.light .bg-zinc-800\/80,
+body.light .bg-stone-800\/60,
+body.light .bg-zinc-800\/60,
+body.light .bg-stone-800\/50,
+body.light .bg-zinc-800\/50 {
+  background-color: #F1F5F9 !important;
+  color: #1E293B !important;
+}
+
+/* 4. Interactive Hover States */
+body.light .hover\:bg-zinc-800:hover,
+body.light .hover\:bg-stone-800:hover,
+body.light .hover\:bg-zinc-700:hover,
+body.light .hover\:bg-stone-700:hover {
+  background-color: #E2E8F0 !important;
+  color: #0F172A !important;
+}
+
+body.light .hover\:bg-zinc-900:hover,
+body.light .hover\:bg-stone-900:hover {
+  background-color: #F8FAFC !important;
+}
+
+/* 5. Borders & Dividers */
+body.light .border-stone-800,
+body.light .border-zinc-800,
+body.light .border-stone-800\/80,
+body.light .border-zinc-800\/80,
+body.light .border-stone-800\/60,
+body.light .border-zinc-800\/60,
+body.light .border-zinc-800\/90,
+body.light .border-stone-700,
+body.light .border-zinc-700,
+body.light .border-stone-700\/80,
+body.light .border-zinc-700\/80,
+body.light .border-zinc-700\/60 {
+  border-color: #E2E8F0 !important;
+}
+
+body.light .divide-zinc-800 > :not([hidden]) ~ :not([hidden]),
+body.light .divide-stone-800 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #E2E8F0 !important;
+}
+
+/* 6. Typography & Text Hierarchy */
+body.light h1,
+body.light h2,
+body.light h3,
+body.light h4,
+body.light .text-white {
+  color: #0F172A !important;
+}
+
+body.light .text-stone-100,
+body.light .text-zinc-100,
+body.light .text-stone-200,
+body.light .text-zinc-200 {
+  color: #1E293B !important;
+}
+
+body.light .text-stone-300,
+body.light .text-zinc-300 {
+  color: #334155 !important;
+}
+
+body.light .text-stone-400,
+body.light .text-zinc-400 {
+  color: #475569 !important;
+}
+
+body.light .text-stone-500,
+body.light .text-zinc-500 {
+  color: #64748B !important;
+}
+
+/* 7. High-Contrast Semantic Color Tuning for Light Backgrounds */
+body.light .text-amber-400,
+body.light .text-amber-300,
+body.light .text-yellow-400,
+body.light .text-yellow-300 {
+  color: #B45309 !important; /* Rich deep amber-700 for WCAG AA compliance */
+}
+
+body.light .text-amber-500 {
+  color: #B45309 !important;
+}
+
+body.light .text-emerald-400,
+body.light .text-emerald-300,
+body.light .text-green-400 {
+  color: #047857 !important; /* Emerald-700 */
+}
+
+body.light .text-rose-400,
+body.light .text-rose-300,
+body.light .text-red-400,
+body.light .text-red-300 {
+  color: #BE123C !important; /* Rose-700 */
+}
+
+body.light .text-cyan-400,
+body.light .text-cyan-300,
+body.light .text-sky-400 {
+  color: #0369A1 !important; /* Sky-700 */
+}
+
+body.light .text-purple-400,
+body.light .text-violet-400 {
+  color: #6D28D9 !important; /* Violet-700 */
+}
+
+body.light .text-pink-400,
+body.light .text-pink-300 {
+  color: #BE185D !important; /* Pink-700 */
+}
+
+/* 8. Badges, Tags & Soft Color Backgrounds */
+body.light .bg-amber-500\/10,
+body.light .bg-amber-500\/20,
+body.light .bg-amber-400\/10,
+body.light .bg-amber-400\/20 {
+  background-color: #FEF3C7 !important;
+  border-color: #FCD34D !important;
+  color: #92400E !important;
+}
+
+body.light .bg-rose-500\/10,
+body.light .bg-rose-500\/20,
+body.light .bg-red-500\/10,
+body.light .bg-red-500\/20 {
+  background-color: #FFE4E6 !important;
+  border-color: #FDA4AF !important;
+  color: #9F1239 !important;
+}
+
+body.light .bg-emerald-500\/10,
+body.light .bg-emerald-500\/20,
+body.light .bg-green-500\/10,
+body.light .bg-green-500\/20 {
+  background-color: #D1FAE5 !important;
+  border-color: #6EE7B7 !important;
+  color: #065F46 !important;
+}
+
+body.light .bg-cyan-500\/10,
+body.light .bg-cyan-500\/20,
+body.light .bg-sky-500\/10,
+body.light .bg-sky-500\/20 {
+  background-color: #E0F2FE !important;
+  border-color: #7DD3FC !important;
+  color: #075985 !important;
+}
+
+body.light .bg-pink-500\/10,
+body.light .bg-pink-500\/20 {
+  background-color: #FCE7F3 !important;
+  border-color: #F472B6 !important;
+  color: #831843 !important;
+}
+
+/* 9. Header & Navigation */
+body.light header {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border-bottom-color: #E2E8F0 !important;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* 10. Form Controls: Inputs, Selects & Textareas */
+body.light input[type="text"],
+body.light input[type="number"],
+body.light input[type="search"],
+body.light select,
+body.light textarea {
+  background-color: #FFFFFF !important;
+  border-color: #CBD5E1 !important;
+  color: #0F172A !important;
+}
+
+body.light input::placeholder,
+body.light textarea::placeholder {
+  color: #94A3B8 !important;
+}
+
+body.light select option {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+}
+
+/* 11. Bento Surprise Card (Card 3 in Hero) */
+body.light .bento-surprise-card {
+  background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 50%, #FDE68A 100%) !important;
+  border-color: #F59E0B !important;
+  box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.15) !important;
+}
+
+body.light .bento-surprise-card h3 {
+  color: #78350F !important;
+}
+
+body.light .bento-surprise-card p {
+  color: #92400E !important;
+}
+
+/* 12. Unhinged & High-Intensity Flame Cards (Keep Dark / Vibrant) */
+body.light .keep-dark,
+body.light .keep-dark h1,
+body.light .keep-dark h2,
+body.light .keep-dark h3,
+body.light .keep-dark h4,
+body.light .keep-dark p,
+body.light .keep-dark span {
+  color: #FFFFFF !important;
+}
+
+body.light .keep-dark .text-amber-100 {
+  color: #FEF3C7 !important;
+}
+
+body.light .keep-dark .text-amber-200 {
+  color: #FDE68A !important;
+}
+
+body.light .keep-dark .text-amber-300,
+body.light .keep-dark .text-amber-400 {
+  color: #FBBF24 !important;
+}
+
+body.light .keep-dark button.bg-black {
+  background-color: #09090B !important;
+  color: #F59E0B !important;
+  border-color: rgba(245, 158, 11, 0.4) !important;
+}
+
+/* 13. Solid Amber & Action Buttons (Must maintain crisp dark text) */
+body.light button.bg-amber-500,
+body.light .bg-amber-500,
+body.light button.bg-amber-400,
+body.light .bg-amber-400 {
+  color: #000000 !important;
+}
+
+body.light button.bg-amber-500 span,
+body.light button.bg-amber-400 span {
+  color: #000000 !important;
+}
+
+/* 14. Dialog Modals & Backdrops */
+body.light .modal-backdrop {
+  background-color: rgba(15, 23, 42, 0.6) !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+body.light .modal-container {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  color: #0F172A !important;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25) !important;
+}
+
+/* 15. Toast Generator Card in Light Theme */
+body.light .toast-display-card {
+  background: linear-gradient(135deg, #FFFFFF 0%, #FFFBEB 100%) !important;
+  border-color: #FDE68A !important;
+}
+
+/* 16. General Bento Card Utility */
 .bento-card {
   background-color: #18181B;
   border: 1px solid #27272A;

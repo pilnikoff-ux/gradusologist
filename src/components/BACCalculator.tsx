@@ -275,7 +275,7 @@ export const BACCalculator: React.FC<Props> = ({ language }) => {
                     <span className="text-stone-200">{isUa ? d.name : d.nameEn}</span>
                     <div className="flex items-center gap-3">
                       <span className="font-mono text-cyan-400">
-                        {d.volumeMl} мл ({d.abv}%)
+                        {d.volumeMl} {isUa ? 'мл' : 'ml'} ({d.abv}%)
                       </span>
                       <button
                         onClick={() => handleRemoveDrink(d.id)}
