@@ -1,4 +1,6 @@
 import { CocktailItem } from '../types';
+import { SAVOY_COCKTAILS } from './cocktailsSavoy';
+import { DIFFORD_COCKTAILS } from './cocktailsDifford';
 
 export const COCKTAILS_DATABASE: CocktailItem[] = [
   {
@@ -1617,7 +1619,10 @@ export const COCKTAILS_DATABASE: CocktailItem[] = [
     foodPairingEn: 'Spectacular with fresh goat cheese, roasted pepper bruschetta, and wild berries.',
     idealSnacks: ['Брускети з козячим сиром та медом', 'В\'ялені томати з оливками', 'Карпатські сири з горіхами'],
     idealSnacksEn: ['Goat cheese & wildflower honey crostini', 'Sun-dried tomatoes with olives', 'Artisan artisan sheep cheese']
-  }
+  },
+  ...SAVOY_COCKTAILS,
+  ...DIFFORD_COCKTAILS
 ];
+
 
 

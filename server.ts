@@ -37,7 +37,7 @@ app.get("/api/health", (_req, res) => {
 
 // Helper to generate content with fallback
 async function generateWithFallback(ai: GoogleGenAI, prompt: string, isJson: boolean = true): Promise<string> {
-  const modelsToTry = ["gemini-3.7-flash", "gemini-3.1-flash-lite"];
+  const modelsToTry = ["gemini-3.8-flash", "gemini-3.1-flash-lite", "gemini-flash-latest"];
   let lastError: any = null;
 
   for (const model of modelsToTry) {
@@ -59,7 +59,7 @@ async function generateWithFallback(ai: GoogleGenAI, prompt: string, isJson: boo
       }
     } catch (err) {
       lastError = err;
-      console.warn(`Model ${model} request failed, attempting fallback...`, err instanceof Error ? err.message : err);
+      console.info(`Model ${model} request unavailable, attempting fallback...`);
     }
   }
 

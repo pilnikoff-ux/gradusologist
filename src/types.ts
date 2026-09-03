@@ -17,9 +17,28 @@ export type EmotionType =
   | 'zen'
   | 'party_beast'
   | 'adventurous'
+  | 'adventure'
   | 'melancholy'
   | 'passion'
-  | 'euphoria';
+  | 'euphoria'
+  | 'hangover'
+  | 'festive'
+  | 'philosophical'
+  | 'cozy'
+  | 'comfort'
+  | 'refreshment'
+  | 'confidence'
+  | 'focus'
+  | 'drama';
+
+export type CocktailCollection = 'iba' | 'savoy' | 'diffords' | 'difford' | 'tiki' | 'modern' | 'all';
+
+export type AlcoholProductionGroup =
+  | 'fermented'   // 1. Зброджені (ферментовані) напої 3-20%
+  | 'distilled'   // 2. Дистильовані (міцні) напої 35-70%+
+  | 'fortified'   // 3. Кріплені вина 15-22%
+  | 'liqueurs'    // 4. Лікери та настоянки
+  | 'regional';   // 5. За регіональними особливостями
 
 export interface Ingredient {
   name: string;
@@ -39,9 +58,13 @@ export interface CocktailItem {
   description?: string;
   descriptionEn?: string;
   type: CocktailType;
-  baseSpirit: 'whiskey' | 'vodka' | 'gin' | 'rum' | 'tequila' | 'brandy' | 'liqueur' | 'wine' | 'none';
+  baseSpirit: 'whiskey' | 'vodka' | 'gin' | 'rum' | 'tequila' | 'brandy' | 'liqueur' | 'wine' | 'none' | string;
   abv: number; // approximate percentage e.g. 18
   ibaOfficial?: boolean;
+  ibaCategory?: 'unforgettables' | 'contemporary' | 'new_era' | string;
+  collection?: 'iba' | 'savoy' | 'diffords' | 'difford' | 'tiki' | 'modern' | string;
+  sourceReference?: string; // e.g. "The Savoy Cocktail Book (1930)", "Difford's Guide 5/5", "IBA Official"
+  sourceReferenceEn?: string;
   isTop10?: boolean;
   isAuthor?: boolean;
   top10Rank?: number; // 1 to 10 if in top 10
@@ -82,6 +105,8 @@ export interface CocktailItem {
   historyEn?: string;
   historyNote?: string;
   historyNoteEn?: string;
+  era?: string;
+  eraEn?: string;
 }
 
 export type Cocktail = CocktailItem;
@@ -123,7 +148,14 @@ export interface AlcoholHistoryItem {
   id: string;
   name: string;
   nameEn: string;
-  category: 'whiskey' | 'vodka' | 'gin' | 'rum' | 'tequila' | 'brandy' | 'wine' | 'beer' | 'absinthe' | 'liqueurs' | 'cider' | string;
+  category: string;
+  productionGroup: AlcoholProductionGroup;
+  productionGroupTitleUa: string;
+  productionGroupTitleEn: string;
+  rawMaterial: string;
+  rawMaterialEn: string;
+  subType?: string;
+  subTypeEn?: string;
   abvRange: string;
   originCountry: string;
   originCountryEn: string;
@@ -142,6 +174,8 @@ export interface AlcoholHistoryItem {
   productionMethodEn: string;
   howToDrink: string;
   howToDrinkEn: string;
+  culturalRituals?: string;
+  culturalRitualsEn?: string;
   foodPairing?: string;
   foodPairingEn?: string;
   bestSnacks?: string[];

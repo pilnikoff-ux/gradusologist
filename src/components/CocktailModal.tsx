@@ -56,13 +56,13 @@ export const CocktailModal: React.FC<Props> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md overflow-y-auto animate-fadeIn">
       <div
-        className="relative w-full max-w-2xl rounded-3xl bg-stone-900 border border-stone-700 p-5 sm:p-8 shadow-2xl shadow-black/90 my-6 max-h-[90vh] overflow-y-auto"
+        className="relative w-full max-w-2xl rounded-3xl bg-stone-900 border border-stone-800 p-5 sm:p-8 shadow-2xl shadow-black/80 my-6 max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 rounded-full bg-stone-800/90 hover:bg-stone-700 text-stone-300 transition-colors z-20"
+          className="absolute top-4 right-4 p-2 rounded-full bg-stone-950/80 hover:bg-stone-800 text-stone-400 hover:text-white border border-stone-800 transition-colors z-20 cursor-pointer"
           aria-label="Close modal"
         >
           <X className="w-5 h-5" />
@@ -70,14 +70,14 @@ export const CocktailModal: React.FC<Props> = ({
 
         {/* Top Header Card */}
         <div className="flex flex-col sm:flex-row gap-5 mb-6">
-          <div className="w-full sm:w-48 h-48 sm:h-52 rounded-2xl overflow-hidden bg-stone-950 shrink-0 relative shadow-inner">
+          <div className="w-full sm:w-48 h-48 sm:h-52 rounded-2xl overflow-hidden bg-stone-950 shrink-0 relative border border-stone-800 shadow-inner">
             <img
               src={cocktail.image}
               alt={isUa ? cocktail.name : cocktail.nameEn}
               referrerPolicy="no-referrer"
               className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
             />
-            <div className="absolute top-2 left-2 px-2.5 py-1 rounded-lg bg-black/80 backdrop-blur-md text-[11px] font-bold text-amber-400 font-mono border border-amber-500/30">
+            <div className="absolute top-2 left-2 px-2.5 py-1 rounded-lg bg-stone-950/80 backdrop-blur-md text-[11px] font-bold text-amber-400 font-mono border border-amber-500/30">
               {cocktail.abv}% ABV
             </div>
             {cocktail.top10Rank && (
@@ -90,14 +90,14 @@ export const CocktailModal: React.FC<Props> = ({
 
           <div className="flex-1 flex flex-col justify-center">
             <div className="flex flex-wrap gap-2 items-center mb-2">
-              <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[11px] font-bold uppercase tracking-wider">
+              <span className="px-2.5 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[11px] font-bold uppercase tracking-wider">
                 {cocktail.type}
               </span>
-              <span className="px-2.5 py-0.5 rounded-full bg-stone-800 text-stone-300 text-[11px] font-medium">
+              <span className="px-2.5 py-0.5 rounded-full bg-stone-950 border border-stone-800 text-stone-300 text-[11px] font-medium">
                 {isUa ? (cocktail.glassware || cocktail.glass) : (cocktail.glasswareEn || cocktail.glassEn)}
               </span>
               {(cocktail.calories || cocktail.caloriesApprox) && (
-                <span className="text-xs text-stone-500 font-mono">
+                <span className="text-xs text-stone-400 font-mono">
                   ~{cocktail.calories || cocktail.caloriesApprox} kcal
                 </span>
               )}
@@ -122,8 +122,8 @@ export const CocktailModal: React.FC<Props> = ({
         </div>
 
         {/* Flavor Profile Bars */}
-        <div className="p-3.5 rounded-2xl bg-stone-950 border border-stone-800 mb-5">
-          <h4 className="text-[11px] font-semibold text-stone-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+        <div className="p-3.5 rounded-2xl bg-stone-950/80 border border-stone-800 mb-5">
+          <h4 className="text-[11px] font-semibold text-stone-400 uppercase tracking-wider mb-2 flex items-center gap-1.5 font-['Unbounded']">
             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
             {isUa ? 'Смаковий профіль' : 'Flavor Profile'}
           </h4>
@@ -163,7 +163,7 @@ export const CocktailModal: React.FC<Props> = ({
 
         {/* 🍽️ Food Pairing & Snacks Card */}
         <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 mb-5">
-          <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider mb-2 flex items-center gap-2">
+          <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider mb-2 flex items-center gap-2 font-['Unbounded']">
             <Utensils className="w-4 h-4 text-amber-400" />
             {isUa ? '🍽️ Рекомендації: З якою їжею та закусками вживати' : '🍽️ Food Pairing & Best Snacks'}
           </h4>
@@ -184,7 +184,7 @@ export const CocktailModal: React.FC<Props> = ({
                   (snack, idx) => (
                     <span
                       key={idx}
-                      className="px-2.5 py-1 rounded-lg bg-stone-900 border border-amber-500/30 text-amber-400 text-xs font-medium"
+                      className="px-2.5 py-1 rounded-lg bg-stone-950 border border-amber-500/30 text-amber-300 text-xs font-medium"
                     >
                       🍢 {snack}
                     </span>
@@ -198,8 +198,8 @@ export const CocktailModal: React.FC<Props> = ({
         {/* Ingredients & Instructions 2-Column */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
           {/* Ingredients */}
-          <div className="p-4 rounded-2xl bg-stone-950 border border-stone-800">
-            <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+          <div className="p-4 rounded-2xl bg-stone-950/80 border border-stone-800">
+            <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider mb-3 flex items-center gap-1.5 font-['Unbounded']">
               <Droplets className="w-3.5 h-3.5" />
               {isUa ? 'Інгредієнти та пропорції' : 'Ingredients'}
             </h4>
@@ -222,8 +222,8 @@ export const CocktailModal: React.FC<Props> = ({
           </div>
 
           {/* Instructions */}
-          <div className="p-4 rounded-2xl bg-stone-950/70 border border-stone-800">
-            <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+          <div className="p-4 rounded-2xl bg-stone-950/80 border border-stone-800">
+            <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider mb-3 flex items-center gap-1.5 font-['Unbounded']">
               <Clock className="w-3.5 h-3.5" />
               {isUa ? 'Покрокове приготування' : 'Step-by-Step Method'}
             </h4>
@@ -239,8 +239,8 @@ export const CocktailModal: React.FC<Props> = ({
 
         {/* History / Origin Story */}
         {(cocktail.history || cocktail.historyEn) && (
-          <div className="p-3.5 rounded-2xl bg-stone-950/50 border border-stone-800/70 mb-5">
-            <div className="flex items-center gap-1.5 text-[11px] font-semibold text-amber-400 uppercase tracking-wider mb-1">
+          <div className="p-3.5 rounded-2xl bg-stone-950/60 border border-stone-800/80 mb-5">
+            <div className="flex items-center gap-1.5 text-[11px] font-semibold text-amber-400 uppercase tracking-wider mb-1 font-['Unbounded']">
               <BookOpen className="w-3.5 h-3.5" />
               {isUa ? 'Історична довідка' : 'Historical Origin'}
             </div>
@@ -258,10 +258,10 @@ export const CocktailModal: React.FC<Props> = ({
                 onToggleFavorite(cocktail.id);
                 playClinkSound();
               }}
-              className={`py-3 px-5 rounded-xl font-bold font-['Unbounded'] text-xs flex items-center justify-center gap-2 transition-all ${
+              className={`py-3 px-5 rounded-xl font-bold font-['Unbounded'] text-xs flex items-center justify-center gap-2 transition-all cursor-pointer ${
                 isFavorite
                   ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40 hover:bg-rose-500/30'
-                  : 'bg-stone-800 text-stone-300 hover:bg-stone-700'
+                  : 'bg-stone-950 hover:bg-stone-800 text-stone-300 border border-stone-800 hover:text-white'
               }`}
             >
               <Heart className={`w-4 h-4 ${isFavorite ? 'fill-rose-400 text-rose-400' : ''}`} />
@@ -273,7 +273,7 @@ export const CocktailModal: React.FC<Props> = ({
 
           <button
             onClick={handleCopyRecipe}
-            className="flex-1 py-3 px-5 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold font-['Unbounded'] text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-amber-500/20"
+            className="flex-1 py-3 px-5 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold font-['Unbounded'] text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-amber-500/20 cursor-pointer"
           >
             {copied ? (
               <>

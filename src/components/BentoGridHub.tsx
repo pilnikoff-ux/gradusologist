@@ -237,15 +237,18 @@ export const BentoGridHub: React.FC<Props> = ({
             </button>
           </div>
 
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <div
               onClick={() => onNavigate('hangover')}
-              className="bg-zinc-800/80 hover:bg-zinc-800 p-2 rounded-xl flex items-center justify-between border-l-4 border-emerald-500 cursor-pointer transition-colors"
+              className="bg-zinc-800/80 hover:bg-zinc-800 p-2.5 rounded-xl flex items-center justify-between border border-zinc-700/60 hover:border-emerald-500/50 cursor-pointer transition-colors"
             >
               <div>
-                <span className="text-[10px] font-black text-emerald-400 uppercase tracking-wider block">
-                  {isUa ? 'ДО ВЕЧІРКИ (PRE-PARTY)' : 'PRE-PARTY PROTOCOL'}
-                </span>
+                <div className="flex items-center gap-1.5 mb-0.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                  <span className="text-[10px] font-black text-emerald-400 uppercase tracking-wider block font-['Unbounded']">
+                    {isUa ? 'ДО ВЕЧІРКИ (PRE-PARTY)' : 'PRE-PARTY PROTOCOL'}
+                  </span>
+                </div>
                 <p className="text-[10px] text-zinc-300">
                   {isUa ? 'Жирна їжа, Вітамін B1, Регідрон' : 'Fatty meal & Vitamin B1 + Hydration'}
                 </p>
@@ -255,12 +258,15 @@ export const BentoGridHub: React.FC<Props> = ({
 
             <div
               onClick={() => onNavigate('hangover')}
-              className="bg-zinc-800/80 hover:bg-zinc-800 p-2 rounded-xl flex items-center justify-between border-l-4 border-red-500 cursor-pointer transition-colors"
+              className="bg-zinc-800/80 hover:bg-zinc-800 p-2.5 rounded-xl flex items-center justify-between border border-zinc-700/60 hover:border-red-500/50 cursor-pointer transition-colors"
             >
               <div>
-                <span className="text-[10px] font-black text-red-400 uppercase tracking-wider block">
-                  {isUa ? 'ПОХМІЛЛЯ (РАНОК)' : 'HANGOVER MORNING'}
-                </span>
+                <div className="flex items-center gap-1.5 mb-0.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-400"></span>
+                  <span className="text-[10px] font-black text-red-400 uppercase tracking-wider block font-['Unbounded']">
+                    {isUa ? 'ПОХМІЛЛЯ (РАНОК)' : 'HANGOVER MORNING'}
+                  </span>
+                </div>
                 <p className="text-[10px] text-zinc-300">
                   {isUa ? 'Ентеросгель, Бурштинова к-та' : 'Enterosgel & Succinic acid'}
                 </p>
@@ -270,12 +276,15 @@ export const BentoGridHub: React.FC<Props> = ({
 
             <div
               onClick={() => onNavigate('hangover')}
-              className="bg-zinc-800/80 hover:bg-zinc-800 p-2 rounded-xl flex items-center justify-between border-l-4 border-amber-500 cursor-pointer transition-colors"
+              className="bg-zinc-800/80 hover:bg-zinc-800 p-2.5 rounded-xl flex items-center justify-between border border-zinc-700/60 hover:border-amber-500/50 cursor-pointer transition-colors"
             >
               <div>
-                <span className="text-[10px] font-black text-amber-400 uppercase tracking-wider block">
-                  {isUa ? 'СТОП НУДОТА' : 'NO NAUSEA / VOMIT'}
-                </span>
+                <div className="flex items-center gap-1.5 mb-0.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                  <span className="text-[10px] font-black text-amber-400 uppercase tracking-wider block font-['Unbounded']">
+                    {isUa ? 'СТОП НУДОТА' : 'NO NAUSEA / VOMIT'}
+                  </span>
+                </div>
                 <p className="text-[10px] text-zinc-300">
                   {isUa ? 'Імбирний чай, Ондансетрон' : 'Ginger tea, Ondansetron & Sorbitol'}
                 </p>
