@@ -1,8 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Language, CocktailItem, CrazyCocktail } from './types';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Language, CocktailItem, CrazyCocktail, UserProfile } from './types';
+import { COCKTAILS_DATABASE } from './data/cocktails';
+import { getSommelierProgress } from './utils/sommelierExperience';
+import { getCurrentUser } from './utils/userAuth';
 import { Navbar } from './components/Navbar';
 import { BentoGridHub } from './components/BentoGridHub';
 import { InteractiveRoulette } from './components/InteractiveRoulette';
+import { PartyModeRoulette } from './components/PartyModeRoulette';
 import { EmotionalBar } from './components/EmotionalBar';
 import { SurpriseGenerators } from './components/SurpriseGenerators';
 import { CocktailCatalog } from './components/CocktailCatalog';
@@ -18,6 +22,9 @@ import { AlcoholHistory } from './components/AlcoholHistory';
 import { CocktailModal } from './components/CocktailModal';
 import { GlobalSearchModal } from './components/GlobalSearchModal';
 import { MyJournalModal } from './components/MyJournalModal';
+import { SommelierCardModal } from './components/SommelierCardModal';
+import { GoogleAuthModal } from './components/GoogleAuthModal';
+import { PWAInstallPrompt } from './components/PWAInstallPrompt';
 import { ChevronUp } from 'lucide-react';
 
 export function App() {
@@ -102,6 +109,21 @@ export function App() {
   // Scroll top state
   const [showScrollTop, setShowScrollTop] = useState(false);
 
+  // Modals for Sommelier Passport, Google Auth & PWA Install
+  const [isSommelierPassOpen, setIsSommelierPassOpen] = useState(false);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isPWAOpen, setIsPWAOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>(() => getCurrentUser());
+
+  // Favorite cocktail entities for sommelier ranking calculation
+  const favoriteCocktails = useMemo(() => {
+    return COCKTAILS_DATABASE.filter((c) => favorites.includes(c.id));
+  }, [favorites]);
+
+  const sommelierProgress = useMemo(() => {
+    return getSommelierProgress(favorites.length, favoriteCocktails);
+  }, [favorites.length, favoriteCocktails]);
+
   // Sync language to localStorage
   const handleLanguageChange = (lang: Language) => {
     setLanguage(lang);
@@ -149,6 +171,7 @@ export function App() {
     const targetIds = [
       `${sectionId}-section`,
       sectionId,
+      sectionId === 'party-roulette' ? 'party-roulette-section' : '',
       sectionId === 'pairings' ? 'food-pairings-section' : '',
       sectionId === 'bac' ? 'bac-calculator-section' : '',
       sectionId === 'test' ? 'alcoholic-test-section' : '',
@@ -174,11 +197,17 @@ export function App() {
         setIsJournalOpen(false);
       } else if (isSearchOpen) {
         setIsSearchOpen(false);
+      } else if (isSommelierPassOpen) {
+        setIsSommelierPassOpen(false);
+      } else if (isAuthOpen) {
+        setIsAuthOpen(false);
+      } else if (isPWAOpen) {
+        setIsPWAOpen(false);
       }
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
-  }, [modalCocktail, isJournalOpen, isSearchOpen]);
+  }, [modalCocktail, isJournalOpen, isSearchOpen, isSommelierPassOpen, isAuthOpen, isPWAOpen]);
 
   const openCocktailModal = (cocktail: CocktailItem) => {
     window.history.pushState({ modal: 'cocktail', id: cocktail.id }, '');
@@ -221,6 +250,11 @@ export function App() {
         onToggleTheme={toggleTheme}
         onOpenSearch={openSearchModal}
         onOpenJournal={openJournalModal}
+        sommelierRank={sommelierProgress.currentLevel}
+        onOpenSommelierPass={() => setIsSommelierPassOpen(true)}
+        onOpenPWA={() => setIsPWAOpen(true)}
+        currentUser={currentUser}
+        onOpenAuthModal={() => setIsAuthOpen(true)}
       />
 
       {/* Main Container */}
@@ -244,10 +278,19 @@ export function App() {
             if (btn) btn.click();
           }}
           onOpenJournal={openJournalModal}
+          onOpenPartyRoulette={() => handleNavigate('party-roulette')}
+          onOpenSommelierPass={() => setIsSommelierPassOpen(true)}
+          onOpenPWA={() => setIsPWAOpen(true)}
+          sommelierRank={sommelierProgress.currentLevel}
         />
 
         {/* 1. Interactive Roulette with 17 options */}
         <InteractiveRoulette language={language} />
+
+        {/* 1.5. "У МЕНЕ ПАТІ!" Interactive Party Roulette with Custom Booze & Snacks */}
+        <div id="party-roulette-section">
+          <PartyModeRoulette language={language} />
+        </div>
 
         {/* 2. Neuro-Mixology Emotional Bar */}
         <EmotionalBar
@@ -272,6 +315,8 @@ export function App() {
           favorites={favorites}
           onToggleFavorite={handleToggleFavorite}
           onOpenCocktailModal={openCocktailModal}
+          onOpenSommelierPass={() => setIsSommelierPassOpen(true)}
+          sommelierRank={sommelierProgress.currentLevel}
         />
 
         {/* 5. Top 10 World Cocktails */}
@@ -349,6 +394,38 @@ export function App() {
         onOpenGeneratorTab={() => {
           handleNavigate('generators');
         }}
+        currentUser={currentUser}
+        onOpenAuthModal={() => setIsAuthOpen(true)}
+        onOpenSommelierPass={() => setIsSommelierPassOpen(true)}
+      />
+
+      {/* Sommelier Experience Card & Level Modal */}
+      <SommelierCardModal
+        language={language}
+        isOpen={isSommelierPassOpen}
+        onClose={() => setIsSommelierPassOpen(false)}
+        favoritesCount={favorites.length}
+        favoriteCocktails={favoriteCocktails}
+        onOpenCatalog={() => {
+          setIsSommelierPassOpen(false);
+          handleNavigate('catalog');
+        }}
+      />
+
+      {/* Google Authentication Modal */}
+      <GoogleAuthModal
+        language={language}
+        isOpen={isAuthOpen}
+        onClose={() => setIsAuthOpen(false)}
+        currentUser={currentUser}
+        onUserChange={(user) => setCurrentUser(user)}
+      />
+
+      {/* PWA Mobile Installation Prompt Modal */}
+      <PWAInstallPrompt
+        language={language}
+        isOpen={isPWAOpen}
+        onClose={() => setIsPWAOpen(false)}
       />
 
       {/* Back to Top Floating Button */}

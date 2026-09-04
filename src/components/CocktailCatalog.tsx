@@ -26,13 +26,17 @@ interface Props {
   onOpenCocktailModal?: (c: CocktailItem) => void;
   favorites: string[];
   onToggleFavorite: (id: string) => void;
+  onOpenSommelierPass?: () => void;
+  sommelierRank?: { badge: string; titleUa: string; titleEn: string; level: number };
 }
 
 export const CocktailCatalog: React.FC<Props> = ({
   language,
   onOpenCocktailModal,
   favorites,
-  onToggleFavorite
+  onToggleFavorite,
+  onOpenSommelierPass,
+  sommelierRank
 }) => {
   const isUa = language === 'uk';
 
@@ -190,8 +194,25 @@ export const CocktailCatalog: React.FC<Props> = ({
           </p>
         </div>
 
-        {/* Quick Favorite Action */}
-        <div className="flex flex-wrap gap-2">
+        {/* Quick Favorite Action & Sommelier Passport */}
+        <div className="flex flex-wrap items-center gap-2">
+          {sommelierRank && onOpenSommelierPass && (
+            <button
+              onClick={() => {
+                playClinkSound();
+                onOpenSommelierPass();
+              }}
+              className="px-3 py-2 rounded-xl text-xs font-bold font-['Unbounded'] flex items-center gap-1.5 bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/40 transition-all cursor-pointer shadow-sm group"
+              title={isUa ? 'Переглянути Паспорт Сомельє' : 'View Sommelier Pass'}
+            >
+              <span className="text-sm group-hover:scale-110 transition-transform">{sommelierRank.badge}</span>
+              <span className="text-[11px]">{isUa ? sommelierRank.titleUa : sommelierRank.titleEn}</span>
+              <span className="px-1.5 py-0.2 rounded bg-black/40 text-amber-400 text-[9px] font-mono border border-amber-500/30">
+                L{sommelierRank.level}
+              </span>
+            </button>
+          )}
+
           <button
             onClick={() => {
               playClinkSound();

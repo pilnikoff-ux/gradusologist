@@ -293,3 +293,13 @@ export interface DrinkLogEntry {
   abvPercent: number;
   timeHoursAgo: number;
 }
+
+export interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  picture?: string;
+  provider: 'google' | 'guest';
+  joinedAt: string;
+}
+

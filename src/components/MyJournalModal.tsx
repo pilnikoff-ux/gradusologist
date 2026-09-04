@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import { Language, CrazyCocktail, CocktailItem } from '../types';
+import { Language, CrazyCocktail, CocktailItem, UserProfile } from '../types';
 import { COCKTAILS_DATABASE } from '../data/cocktails';
+import { getSommelierProgress } from '../utils/sommelierExperience';
 import {
   Sparkles,
   Heart,
@@ -17,7 +18,14 @@ import {
   Eye,
   FolderHeart,
   RotateCcw,
-  Sparkle
+  Sparkle,
+  Award,
+  Zap,
+  ArrowRight,
+  ShieldCheck,
+  User,
+  Download,
+  Upload
 } from 'lucide-react';
 import { playClinkSound } from '../utils/audio';
 
@@ -33,6 +41,9 @@ interface Props {
   onClearJournal: () => void;
   onOpenCocktailModal: (cocktail: CocktailItem) => void;
   onOpenGeneratorTab?: () => void;
+  currentUser?: UserProfile | null;
+  onOpenAuthModal?: () => void;
+  onOpenSommelierPass?: () => void;
 }
 
 export const MyJournalModal: React.FC<Props> = ({
@@ -46,7 +57,10 @@ export const MyJournalModal: React.FC<Props> = ({
   onDeleteFromJournal,
   onClearJournal,
   onOpenCocktailModal,
-  onOpenGeneratorTab
+  onOpenGeneratorTab,
+  currentUser,
+  onOpenAuthModal,
+  onOpenSommelierPass
 }) => {
   const isUa = language === 'uk';
   const [activeTab, setActiveTab] = useState<'favorites' | 'crazy'>('favorites');
@@ -56,6 +70,10 @@ export const MyJournalModal: React.FC<Props> = ({
   const favoriteCocktails = useMemo(() => {
     return COCKTAILS_DATABASE.filter((c) => favorites.includes(c.id));
   }, [favorites]);
+
+  const sommelier = useMemo(() => {
+    return getSommelierProgress(favorites.length, favoriteCocktails);
+  }, [favorites.length, favoriteCocktails]);
 
   if (!isOpen) return null;
 
@@ -114,15 +132,74 @@ export const MyJournalModal: React.FC<Props> = ({
             </div>
           </div>
 
-          <button
-            onClick={() => {
-              playClinkSound();
-              onClose();
-            }}
-            className="p-2 rounded-xl bg-zinc-800/80 hover:bg-zinc-700 text-zinc-400 hover:text-white transition-colors cursor-pointer"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            {/* Google Account Profile Button */}
+            {currentUser ? (
+              <button
+                onClick={() => {
+                  playClinkSound();
+                  onOpenAuthModal?.();
+                }}
+                className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-emerald-500/40 text-xs text-stone-200 flex items-center gap-2 transition-all cursor-pointer"
+                title={isUa ? 'Акаунт Google (натисніть для налаштувань)' : 'Google Account (click for settings)'}
+              >
+                {currentUser.picture ? (
+                  <img
+                    src={currentUser.picture}
+                    alt={currentUser.name}
+                    className="w-5 h-5 rounded-full object-cover border border-emerald-400"
+                  />
+                ) : (
+                  <User className="w-4 h-4 text-emerald-400" />
+                )}
+                <span className="hidden sm:inline font-bold font-['Unbounded'] text-[11px] max-w-[120px] truncate">
+                  {currentUser.name}
+                </span>
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  playClinkSound();
+                  onOpenAuthModal?.();
+                }}
+                className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 hover:border-amber-500/50 text-xs text-stone-300 hover:text-amber-400 flex items-center gap-1.5 transition-all cursor-pointer"
+              >
+                {/* Small Google icon */}
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24">
+                  <path
+                    fill="#4285F4"
+                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                  />
+                  <path
+                    fill="#34A853"
+                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                  />
+                  <path
+                    fill="#FBBC05"
+                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                  />
+                  <path
+                    fill="#EA4335"
+                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                  />
+                </svg>
+                <span className="hidden sm:inline font-bold font-['Unbounded'] text-[11px]">
+                  {isUa ? 'Увійти з Google' : 'Google Sign-In'}
+                </span>
+              </button>
+            )}
+
+            <button
+              onClick={() => {
+                playClinkSound();
+                onClose();
+              }}
+              className="p-2 rounded-xl bg-zinc-800/80 hover:bg-zinc-700 text-zinc-400 hover:text-white transition-colors cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Tab Navigation */}
@@ -192,6 +269,62 @@ export const MyJournalModal: React.FC<Props> = ({
           {/* TAB 1: FAVORITE COCKTAILS */}
           {activeTab === 'favorites' && (
             <>
+              {/* Sommelier Experience Level Banner */}
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-zinc-950 to-stone-900 border border-amber-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-2xl bg-black/40 border border-amber-500/30 flex items-center justify-center text-2xl shrink-0">
+                    {sommelier.currentLevel.badge}
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider font-['Unbounded']">
+                        {isUa ? 'Ваш Ранг Сомельє' : 'Sommelier Rank'}
+                      </span>
+                      <span className="px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 text-[9px] font-mono font-bold">
+                        Lvl {sommelier.currentLevel.level}/5
+                      </span>
+                    </div>
+                    <h4 className="text-base font-black text-white font-['Unbounded']">
+                      {isUa ? sommelier.currentLevel.titleUa : sommelier.currentLevel.titleEn}
+                    </h4>
+                    <p className="text-[11px] text-stone-400 line-clamp-1">
+                      {sommelier.nextLevel
+                        ? (isUa
+                            ? `Ще ${sommelier.neededForNext} кокт. до рангу «${sommelier.nextLevel.titleUa}»`
+                            : `${sommelier.neededForNext} more to reach ${sommelier.nextLevel.titleEn}`)
+                        : (isUa ? 'Досягнуто найвищий статус!' : 'Supreme rank reached!')}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                  <div className="w-28 sm:w-36">
+                    <div className="flex justify-between text-[10px] text-stone-400 font-mono mb-1">
+                      <span>{favorites.length} favs</span>
+                      <span>{sommelier.progressPercent}%</span>
+                    </div>
+                    <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-amber-500 to-amber-300 rounded-full transition-all"
+                        style={{ width: `${sommelier.progressPercent}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {onOpenSommelierPass && (
+                    <button
+                      onClick={() => {
+                        playClinkSound();
+                        onOpenSommelierPass();
+                      }}
+                      className="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold font-['Unbounded'] text-xs transition-all shrink-0 cursor-pointer flex items-center gap-1"
+                    >
+                      <Award className="w-3.5 h-3.5" />
+                      <span>{isUa ? 'Паспорт' : 'Pass'}</span>
+                    </button>
+                  )}
+                </div>
+              </div>
               {favoriteCocktails.length === 0 ? (
                 <div className="py-16 text-center text-zinc-400 flex flex-col items-center justify-center">
                   <div className="w-16 h-16 rounded-full bg-zinc-800/80 border border-zinc-700 flex items-center justify-center mb-4 text-zinc-500">

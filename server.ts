@@ -292,6 +292,203 @@ User query: "${query}"`;
   }
 });
 
+// Party Drunk Roulette Generator endpoint
+app.post("/api/gemini/party-roulette", async (req, res) => {
+  const {
+    alcohols = ["Горілка", "Єгермейстер", "Пиво"],
+    snacks = ["Солоні огірочки", "Лимон", "Чіпси"],
+    softDrinks = ["Бабусин компот", "Тонік", "Кола"],
+    peopleCount = 4,
+    guestNames = [],
+    partyVibe = "party", // "light", "party", "hardcore"
+    language = "uk"
+  } = req.body || {};
+
+  const isUa = language === "uk";
+  const ai = getGeminiClient();
+
+  const getOfflineChallenges = () => {
+    const alcStr = alcohols.length ? alcohols : ["Горілка", "Пиво"];
+    const snkStr = snacks.length ? snacks : ["Солоні огірочки", "Лимон"];
+    const sftStr = softDrinks.length ? softDrinks : ["Компот", "Тонік"];
+
+    const pick = (arr: string[]) => arr[Math.floor(Math.random() * arr.length)];
+
+    return [
+      {
+        id: "pr_1",
+        title: isUa ? "🎯 Пряме влучання" : "🎯 Direct Shot",
+        action: isUa
+          ? `Випий 40 мл [${pick(alcStr)}] і закуси [${pick(snkStr)}] без допомоги рук!`
+          : `Take 40 ml of [${pick(alcStr)}] and eat [${pick(snkStr)}] with no hands!`,
+        intensity: "medium",
+        icon: "🎯"
+      },
+      {
+        id: "pr_2",
+        title: isUa ? "😭 Тобі не пощастило!" : "😭 Unlucky Sip",
+        action: isUa
+          ? `Тобі не повезло: всі піднімають алкоголь, а ти п'єш повний келих [${pick(sftStr)}] залпом і кажеш душевний тост!`
+          : `Unlucky: while everyone drinks alcohol, you must down a full glass of [${pick(sftStr)}] in one gulp!`,
+        intensity: "low",
+        icon: "🧃"
+      },
+      {
+        id: "pr_3",
+        title: isUa ? "🧪 Пекельний алхімік" : "🧪 Mad Alchemist",
+        action: isUa
+          ? `Змішай у чарці 30 мл [${pick(alcStr)}] з 50 мл [${pick(sftStr)}], скажи «Хай живе хімія!» і випий за здоров'я сусіда праворуч.`
+          : `Mix 30 ml of [${pick(alcStr)}] with 50 ml of [${pick(sftStr)}] and drink to your right neighbor's health!`,
+        intensity: "high",
+        icon: "🧪"
+      },
+      {
+        id: "pr_4",
+        title: isUa ? "🍋 Лимонна / Закусочна дуель" : "🍋 Snack Duel",
+        action: isUa
+          ? `З'їж порцію [${pick(snkStr)}] із кам'яним виразом обличчя протягом 15 секунд. Якщо скривишся — п'єш шот [${pick(alcStr)}]!`
+          : `Eat [${pick(snkStr)}] with a stone face for 15 seconds. If you smile or flinch, drink a shot of [${pick(alcStr)}]!`,
+        intensity: "medium",
+        icon: "🍋"
+      },
+      {
+        id: "pr_5",
+        title: isUa ? "👑 Королівський указ" : "👑 Royal Decree",
+        action: isUa
+          ? `Ти призначаєш будь-кого з компанії випити [${pick(alcStr)}] разом із закускою [${pick(snkStr)}]. Відмовитися не можна!`
+          : `You command any guest to drink [${pick(alcStr)}] paired with [${pick(snkStr)}]!`,
+        intensity: "medium",
+        icon: "👑"
+      },
+      {
+        id: "pr_6",
+        title: isUa ? "🛡️ Щасливий імунітет" : "🛡️ Lucky Immunity",
+        action: isUa
+          ? `Пропускаєш хід і отримуєш право з'їсти улюблену [${pick(snkStr)}]. Наступний гравець отримує подвійну порцію уваги!`
+          : `Skip this turn and treat yourself to [${pick(snkStr)}]!`,
+        intensity: "low",
+        icon: "🛡️"
+      },
+      {
+        id: "pr_7",
+        title: isUa ? "⚡ Бліц-шот" : "⚡ Rapid Shot",
+        action: isUa
+          ? `Назви 3 столиці світу за 5 секунд. Встиг — п'єш смачний [${pick(sftStr)}]. Не встиг — п'єш 40 мл [${pick(alcStr)}]!`
+          : `Name 3 world capitals in 5 seconds. If you succeed, drink [${pick(sftStr)}], otherwise take [${pick(alcStr)}]!`,
+        intensity: "high",
+        icon: "⚡"
+      },
+      {
+        id: "pr_8",
+        title: isUa ? "🫙 Вітамінний ковток" : "🫙 Refreshing Sip",
+        action: isUa
+          ? `Зроби 3 великих ковтки [${pick(sftStr)}] для відновлення водного балансу компанії!`
+          : `Take 3 big sips of [${pick(sftStr)}] to balance your hydration!`,
+        intensity: "low",
+        icon: "💧"
+      },
+      {
+        id: "pr_9",
+        title: isUa ? "🔥 Братнє коло" : "🔥 Brotherhood Toast",
+        action: isUa
+          ? `Чокнутися з усіма за столом і зробити по ковтку [${pick(alcStr)}]. Той, хто чокнеться останнім, закушує [${pick(snkStr)}]!`
+          : `Clink glasses with everyone! The last person to clink eats [${pick(snkStr)}]!`,
+        intensity: "medium",
+        icon: "🍻"
+      },
+      {
+        id: "pr_10",
+        title: isUa ? "🤐 Обітниця мовчання" : "🤐 Vow of Silence",
+        action: isUa
+          ? `Мовчи до наступного свого кола. Якщо скажеш хоч слово — п'єш штрафний шот [${pick(alcStr)}]!`
+          : `Stay silent until your next turn or drink a penalty shot of [${pick(alcStr)}]!`,
+        intensity: "high",
+        icon: "🤐"
+      },
+      {
+        id: "pr_11",
+        title: isUa ? "🎭 Тост навпаки" : "🎭 Backward Toast",
+        action: isUa
+          ? `Скажи тост від імені кота або бармена, що втомився. Якщо всі засміються — компанія п'є [${pick(alcStr)}]!`
+          : `Deliver a toast in the persona of a tired bartender! If people laugh, everyone drinks [${pick(alcStr)}]!`,
+        intensity: "medium",
+        icon: "🎭"
+      },
+      {
+        id: "pr_12",
+        title: isUa ? "🧊 Випробування холодом" : "🧊 Chill Challenge",
+        action: isUa
+          ? `Випий шот [${pick(alcStr)}] з льодом і обов'язково закуси [${pick(snkStr)}].`
+          : `Take a chilled shot of [${pick(alcStr)}] paired with [${pick(snkStr)}].`,
+        intensity: "medium",
+        icon: "🧊"
+      }
+    ];
+  };
+
+  if (!ai) {
+    return res.json({
+      success: true,
+      source: "curated",
+      challenges: getOfflineChallenges()
+    });
+  }
+
+  try {
+    const prompt = `You are the master creator of drinking party games for "Градусолог".
+The user is having a real party with their friends and provided their available items:
+Alcohol bottles available: ${alcohols.join(", ") || "various alcohol"}
+Snacks available: ${snacks.join(", ") || "various snacks"}
+Soft / Non-alcoholic drinks available: ${softDrinks.join(", ") || "water, juice"}
+Number of people: ${peopleCount}
+Guest names (if any): ${guestNames.join(", ") || "Guests"}
+Party Vibe: ${partyVibe} (light, party, or hardcore)
+Language: ${isUa ? "Ukrainian" : "English"}
+
+Generate exactly 12 unique, hilarious, highly creative and interactive "Drunk Roulette" tasks based DIRECTLY on the user's specific alcohol, snacks, and soft drinks!
+Include tasks like:
+- Drinking exact ml of their alcohol and eating specific snack with weird rules (e.g. without hands, with eyes closed)
+- "Unlucky" tasks where someone has to drink a huge glass of their soft drink (e.g., compote, pickle brine, or milk) while everyone else toasts
+- Funny mixes of their alcohol + soft drink
+- Party toasts, duels, silence challenges, and comedic forfeits.
+
+Return ONLY valid JSON array:
+[
+  {
+    "id": "string",
+    "title": "string (short funny title with emoji)",
+    "action": "string (the specific challenge instruction using their actual items)",
+    "intensity": "low" | "medium" | "high",
+    "icon": "string (emoji)"
+  }
+]`;
+
+    const text = await generateWithFallback(ai, prompt, true);
+    const parsed = JSON.parse(text || "[]");
+
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      return res.json({
+        success: true,
+        source: "ai",
+        challenges: parsed
+      });
+    }
+
+    return res.json({
+      success: true,
+      source: "fallback",
+      challenges: getOfflineChallenges()
+    });
+  } catch (error) {
+    console.warn("Gemini party roulette fallback triggered:", error instanceof Error ? error.message : error);
+    return res.json({
+      success: true,
+      source: "fallback",
+      challenges: getOfflineChallenges()
+    });
+  }
+});
+
 // Offline mad cocktails collection
 function getRandomOfflineMadness(lang: string) {
   const isUa = lang === "uk";

@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1A1815"/>
+      <stop offset="50%" stop-color="#0F0F12"/>
+      <stop offset="100%" stop-color="#08080A"/>
+    </linearGradient>
+    <linearGradient id="amberGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FBBF24"/>
+      <stop offset="50%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+    <linearGradient id="liquidGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#B45309"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Background rounded squircle -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)"/>
+  <rect width="504" height="504" x="4" y="4" rx="108" fill="none" stroke="#374151" stroke-width="4" stroke-opacity="0.4"/>
+  <circle cx="256" cy="230" r="160" fill="#F59E0B" fill-opacity="0.08" filter="url(#glow)"/>
+
+  <!-- Stem Glass / Coupe Base -->
+  <path d="M196 410 L316 410" stroke="url(#amberGrad)" stroke-width="18" stroke-linecap="round"/>
+  <path d="M256 280 L256 410" stroke="url(#amberGrad)" stroke-width="16" stroke-linecap="round"/>
+
+  <!-- Glass Bowl -->
+  <path d="M140 180 C140 280, 372 280, 372 180 Z" fill="#1C1917" stroke="url(#amberGrad)" stroke-width="16" stroke-linejoin="round"/>
+  
+  <!-- Liquid Inside -->
+  <path d="M156 200 C170 262, 342 262, 356 200 Z" fill="url(#liquidGrad)"/>
+
+  <!-- Liquid Surface Wave -->
+  <ellipse cx="256" cy="200" rx="100" ry="10" fill="#FDE68A" fill-opacity="0.4"/>
+
+  <!-- Cocktail Olive / Citrus Garnish -->
+  <line x1="160" y1="130" x2="310" y2="240" stroke="#E5E7EB" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="210" cy="170" r="22" fill="#10B981" stroke="#047857" stroke-width="4"/>
+  <circle cx="210" cy="170" r="6" fill="#EF4444"/>
+
+  <!-- Graduation Marks (Thermometer / Gradus scale) -->
+  <line x1="390" y1="140" x2="420" y2="140" stroke="#F59E0B" stroke-width="6" stroke-linecap="round"/>
+  <line x1="390" y1="170" x2="410" y2="170" stroke="#F59E0B" stroke-width="4" stroke-linecap="round" stroke-opacity="0.7"/>
+  <line x1="390" y1="200" x2="430" y2="200" stroke="#F59E0B" stroke-width="7" stroke-linecap="round"/>
+  <line x1="390" y1="230" x2="410" y2="230" stroke="#F59E0B" stroke-width="4" stroke-linecap="round" stroke-opacity="0.7"/>
+  <line x1="390" y1="260" x2="420" y2="260" stroke="#F59E0B" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Degree Symbol ° and Sparkle -->
+  <circle cx="435" cy="120" r="10" fill="none" stroke="#FBBF24" stroke-width="5"/>
+  <path d="M120 120 L126 138 L144 144 L126 150 L120 168 L114 150 L96 144 L114 138 Z" fill="#FBBF24"/>
+</svg>

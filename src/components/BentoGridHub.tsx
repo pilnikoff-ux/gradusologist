@@ -15,7 +15,10 @@ import {
   ArrowRight,
   Zap,
   Activity,
-  BookOpen
+  BookOpen,
+  PartyPopper,
+  Award,
+  Smartphone
 } from 'lucide-react';
 
 interface Props {
@@ -27,6 +30,10 @@ interface Props {
   onQuickCrazyGenerate: () => void;
   onQuickSurprise: () => void;
   onOpenJournal: () => void;
+  onOpenPartyRoulette?: () => void;
+  onOpenSommelierPass?: () => void;
+  onOpenPWA?: () => void;
+  sommelierRank?: { badge: string; titleUa: string; titleEn: string; level: number };
 }
 
 export const BentoGridHub: React.FC<Props> = ({
@@ -37,11 +44,119 @@ export const BentoGridHub: React.FC<Props> = ({
   onQuickCrazyGenerate,
   onQuickSurprise,
   onOpenJournal,
+  onOpenPartyRoulette,
+  onOpenSommelierPass,
+  onOpenPWA,
+  sommelierRank
 }) => {
   const isUa = language === 'uk';
 
   return (
     <section className="px-4 sm:px-6 max-w-7xl mx-auto pt-4 pb-2">
+      {/* Top Special Feature Ribbon: Party Roulette & Sommelier Experience & PWA */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+        {/* Card 1: У мене паті (Interactive Party Roulette) */}
+        <div
+          onClick={() => {
+            playClinkSound();
+            if (onOpenPartyRoulette) onOpenPartyRoulette();
+            else onNavigate('party-roulette');
+          }}
+          className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/20 via-orange-600/15 to-rose-600/20 border border-amber-500/40 hover:border-amber-400 transition-all cursor-pointer group shadow-lg flex items-center justify-between"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-2xl bg-amber-500/30 border border-amber-400/40 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform">
+              🎉
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-mono font-bold bg-amber-500 text-black px-1.5 py-0.2 rounded uppercase">
+                  PARTY MODE
+                </span>
+                <span className="text-[10px] text-amber-400 font-bold uppercase tracking-wider">
+                  AI + ROULETTE
+                </span>
+              </div>
+              <h3 className="text-sm sm:text-base font-black text-white font-['Unbounded'] mt-0.5 group-hover:text-amber-300 transition-colors">
+                {isUa ? '«У МЕНЕ ПАТІ!»' : '«PARTY ROULETTE!»'}
+              </h3>
+              <p className="text-[11px] text-zinc-300 line-clamp-1">
+                {isUa
+                  ? 'Введи свій алкоголь, закуски та людей — рулетка згенерує треш!'
+                  : 'Enter your alcohol, snacks & friends for an unhinged challenge wheel!'}
+              </p>
+            </div>
+          </div>
+          <button className="bg-amber-500 group-hover:bg-amber-400 text-black px-3 py-1.5 rounded-xl text-xs font-black font-['Unbounded'] uppercase shrink-0 transition-colors shadow">
+            {isUa ? 'Грати' : 'Play'}
+          </button>
+        </div>
+
+        {/* Card 2: Sommelier Passport & Level (Social Butterfly -> Home Sommelier) */}
+        <div
+          onClick={() => {
+            playClinkSound();
+            if (onOpenSommelierPass) onOpenSommelierPass();
+            else onOpenJournal();
+          }}
+          className="p-4 rounded-2xl bg-gradient-to-r from-zinc-900 via-zinc-900 to-amber-950/40 border border-zinc-800 hover:border-amber-500/50 transition-all cursor-pointer group shadow-md flex items-center justify-between"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-2xl bg-black/40 border border-amber-500/30 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform">
+              {sommelierRank ? sommelierRank.badge : '🦋'}
+            </div>
+            <div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] text-amber-400 font-mono font-bold uppercase">
+                  {isUa ? 'Паспорт Сомельє' : 'Sommelier Pass'}
+                </span>
+                {sommelierRank && (
+                  <span className="text-[9px] bg-amber-500/20 text-amber-300 px-1.5 py-0.2 rounded font-bold font-mono">
+                    Lvl {sommelierRank.level}/5
+                  </span>
+                )}
+              </div>
+              <h3 className="text-sm sm:text-base font-black text-white font-['Unbounded'] mt-0.5 group-hover:text-amber-400 transition-colors">
+                {sommelierRank ? (isUa ? sommelierRank.titleUa : sommelierRank.titleEn) : (isUa ? 'Соціальний Метелик' : 'Social Butterfly')}
+              </h3>
+              <p className="text-[11px] text-zinc-400 line-clamp-1">
+                {isUa ? 'Додавай коктейлі в улюблені для підвищення рангу' : 'Favorite cocktails to level up your status'}
+              </p>
+            </div>
+          </div>
+          <Award className="w-5 h-5 text-amber-400 shrink-0 group-hover:scale-110 transition-transform" />
+        </div>
+
+        {/* Card 3: PWA Mobile Install Quick Action */}
+        <div
+          onClick={() => {
+            playClinkSound();
+            if (onOpenPWA) onOpenPWA();
+          }}
+          className="p-4 rounded-2xl bg-gradient-to-r from-zinc-900 via-emerald-950/20 to-zinc-900 border border-zinc-800 hover:border-emerald-500/40 transition-all cursor-pointer group shadow-md flex items-center justify-between"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 group-hover:scale-110 transition-transform">
+              <Smartphone className="w-5 h-5" />
+            </div>
+            <div>
+              <span className="text-[10px] text-emerald-400 font-mono font-bold uppercase block">
+                {isUa ? 'Мобільний Додаток PWA' : 'Mobile PWA App'}
+              </span>
+              <h3 className="text-sm sm:text-base font-black text-white font-['Unbounded'] mt-0.5 group-hover:text-emerald-300 transition-colors">
+                {isUa ? 'Встановити на телефон' : 'Install on Phone'}
+              </h3>
+              <p className="text-[11px] text-zinc-400 line-clamp-1">
+                {isUa ? 'Швидкий доступ без браузера та робота офлайн' : 'Quick home screen access and offline mode'}
+              </p>
+            </div>
+          </div>
+          <button className="bg-emerald-500/20 group-hover:bg-emerald-500 group-hover:text-black text-emerald-300 px-3 py-1.5 rounded-xl text-xs font-black font-['Unbounded'] uppercase shrink-0 transition-colors border border-emerald-500/30">
+            {isUa ? 'PWA' : 'PWA'}
+          </button>
+        </div>
+      </div>
+
       {/* Main Bento Grid Structure (Desktop 12 cols, Tablet/Mobile responsive) */}
       <div className="grid grid-cols-1 md:grid-cols-6 lg:grid-cols-12 gap-4 auto-rows-min">
         {/* Box 1: Emotional Mood Match (AI Pick) - All Emojis & Emotions */}

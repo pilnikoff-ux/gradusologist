@@ -1,6 +1,28 @@
 import React from 'react';
-import { Language } from '../types';
-import { Wine, Dices, Brain, Sparkles, MessageSquareQuote, Heart, Trophy, HeartPulse, Utensils, Gauge, ShieldAlert, BookOpen, Flame, Search, Sun, Moon } from 'lucide-react';
+import { Language, UserProfile } from '../types';
+import {
+  Wine,
+  Dices,
+  Brain,
+  Sparkles,
+  MessageSquareQuote,
+  Heart,
+  Trophy,
+  HeartPulse,
+  Utensils,
+  Gauge,
+  ShieldAlert,
+  BookOpen,
+  Flame,
+  Search,
+  Sun,
+  Moon,
+  Smartphone,
+  Award,
+  PartyPopper,
+  User,
+  ShieldCheck
+} from 'lucide-react';
 import { playClinkSound } from '../utils/audio';
 
 interface Props {
@@ -13,6 +35,11 @@ interface Props {
   onToggleTheme: () => void;
   onOpenSearch: () => void;
   onOpenJournal: () => void;
+  sommelierRank?: { badge: string; titleUa: string; titleEn: string; level: number };
+  onOpenSommelierPass?: () => void;
+  onOpenPWA?: () => void;
+  currentUser?: UserProfile | null;
+  onOpenAuthModal?: () => void;
 }
 
 export const Navbar: React.FC<Props> = ({
@@ -24,12 +51,18 @@ export const Navbar: React.FC<Props> = ({
   theme,
   onToggleTheme,
   onOpenSearch,
-  onOpenJournal
+  onOpenJournal,
+  sommelierRank,
+  onOpenSommelierPass,
+  onOpenPWA,
+  currentUser,
+  onOpenAuthModal
 }) => {
   const isUa = language === 'uk';
 
   const navItems = [
     { id: 'roulette', labelUa: 'Рулетка (17 дій)', labelEn: 'Roulette (17)', icon: Dices },
+    { id: 'party-roulette', labelUa: '🎉 У мене паті', labelEn: '🎉 Party Roulette', icon: PartyPopper },
     { id: 'catalog', labelUa: 'Рецепти коктейлів', labelEn: 'Cocktails', icon: Wine },
     { id: 'emotions', labelUa: 'За Емоціями', labelEn: 'Mood Bar', icon: Brain },
     { id: 'generators', labelUa: 'Генератори трешу', labelEn: 'Generators', icon: Sparkles, badge: journalCount > 0 ? journalCount : undefined },
@@ -84,7 +117,44 @@ export const Navbar: React.FC<Props> = ({
           </div>
 
           {/* Right Top Controls */}
-          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+            {/* Sommelier Rank Badge */}
+            {sommelierRank && (
+              <button
+                onClick={() => {
+                  playClinkSound();
+                  onOpenSommelierPass?.();
+                }}
+                className="px-2 sm:px-2.5 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm group"
+                title={isUa ? `Ранг сомельє: ${sommelierRank.titleUa} (Клікніть для паспорта)` : `Sommelier Rank: ${sommelierRank.titleEn}`}
+              >
+                <span className="text-sm group-hover:scale-110 transition-transform">{sommelierRank.badge}</span>
+                <span className="hidden md:inline font-['Unbounded'] text-[11px] font-bold text-amber-200">
+                  {isUa ? sommelierRank.titleUa : sommelierRank.titleEn}
+                </span>
+                <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-black/40 text-amber-400 border border-amber-500/30">
+                  L{sommelierRank.level}
+                </span>
+              </button>
+            )}
+
+            {/* PWA Install Button */}
+            {onOpenPWA && (
+              <button
+                onClick={() => {
+                  playClinkSound();
+                  onOpenPWA();
+                }}
+                className="px-2 sm:px-2.5 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-300 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm group"
+                title={isUa ? 'Встановити додаток на телефон (PWA)' : 'Install as app on phone (PWA)'}
+              >
+                <Smartphone className="w-3.5 h-3.5 text-emerald-400 group-hover:scale-110 transition-transform" />
+                <span className="hidden lg:inline text-[11px] font-['Unbounded'] font-bold">
+                  {isUa ? 'Додаток' : 'App'}
+                </span>
+              </button>
+            )}
+
             {/* Global Search Button */}
             <button
               onClick={() => {
@@ -99,6 +169,31 @@ export const Navbar: React.FC<Props> = ({
                 {isUa ? 'Пошук' : 'Search'}
               </span>
             </button>
+
+            {/* Google User or Sign In */}
+            {onOpenAuthModal && (
+              <button
+                onClick={() => {
+                  playClinkSound();
+                  onOpenAuthModal();
+                }}
+                className="p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 hover:border-amber-500/50 text-zinc-200 hover:text-amber-300 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+                title={currentUser ? (isUa ? `Профіль: ${currentUser.name}` : `Profile: ${currentUser.name}`) : (isUa ? 'Увійти через Google' : 'Sign in with Google')}
+              >
+                {currentUser?.picture ? (
+                  <img
+                    src={currentUser.picture}
+                    alt={currentUser.name}
+                    className="w-5 h-5 rounded-full object-cover border border-emerald-400"
+                  />
+                ) : (
+                  <User className="w-4 h-4 text-amber-400" />
+                )}
+                <span className="hidden xl:inline text-[11px] font-['Unbounded'] font-bold max-w-[100px] truncate">
+                  {currentUser ? currentUser.name.split(' ')[0] : (isUa ? 'Вхід' : 'Login')}
+                </span>
+              </button>
+            )}
 
             {/* Light / Dark Theme Switcher */}
             <button
