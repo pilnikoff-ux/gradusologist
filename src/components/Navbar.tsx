@@ -88,25 +88,25 @@ export const Navbar: React.FC<Props> = ({
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-[#0F0F12]/95 backdrop-blur-md border-b border-zinc-800 shadow-2xl">
+    <header className="sticky top-0 z-50 bg-[#0F0F12]/95 backdrop-blur-md border-b border-zinc-800 shadow-2xl w-full max-w-full overflow-hidden">
       {/* Top Action Bar */}
-      <div className="max-w-7xl mx-auto px-3 sm:px-6">
-        <div className="flex items-center justify-between h-14 sm:h-16 border-b border-zinc-800/60">
+      <div className="max-w-7xl mx-auto px-2 sm:px-6 w-full">
+        <div className="flex items-center justify-between h-14 sm:h-16 border-b border-zinc-800/60 gap-1.5">
           {/* Brand Logo */}
           <div
             onClick={() => handleNavClick('roulette')}
-            className="flex items-center gap-2.5 cursor-pointer group select-none shrink-0"
+            className="flex items-center gap-1.5 sm:gap-2.5 cursor-pointer group select-none shrink-0 min-w-0"
           >
             <div className="w-8 h-8 sm:w-9 sm:h-9 bg-amber-500 rounded-lg sm:rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(245,158,11,0.3)] group-hover:scale-105 transition-transform shrink-0">
-              <span className="text-lg sm:text-xl font-black text-black font-['Unbounded']">G</span>
+              <span className="text-base sm:text-xl font-black text-black font-['Unbounded']">G</span>
             </div>
 
-            <div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-base sm:text-lg font-black font-['Unbounded'] tracking-tight text-white group-hover:text-amber-400 transition-colors">
+            <div className="min-w-0">
+              <div className="flex items-center gap-1 sm:gap-1.5">
+                <span className="text-xs xs:text-sm sm:text-base md:text-lg font-black font-['Unbounded'] tracking-tight text-white group-hover:text-amber-400 transition-colors truncate">
                   GRADUSOLOGIST
                 </span>
-                <span className="text-[9px] px-1.5 py-0.2 rounded bg-zinc-800 text-amber-400 font-bold font-mono border border-zinc-700">
+                <span className="text-[8px] sm:text-[9px] px-1 sm:px-1.5 py-0.2 rounded bg-zinc-800 text-amber-400 font-bold font-mono border border-zinc-700 shrink-0">
                   HUB
                 </span>
               </div>
@@ -117,7 +117,7 @@ export const Navbar: React.FC<Props> = ({
           </div>
 
           {/* Right Top Controls */}
-          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             {/* Sommelier Rank Badge */}
             {sommelierRank && (
               <button
@@ -125,7 +125,7 @@ export const Navbar: React.FC<Props> = ({
                   playClinkSound();
                   onOpenSommelierPass?.();
                 }}
-                className="px-2 sm:px-2.5 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm group"
+                className="px-1.5 sm:px-2.5 py-1 sm:py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 text-xs font-bold transition-all flex items-center gap-1 cursor-pointer shadow-sm group shrink-0"
                 title={isUa ? `Ранг сомельє: ${sommelierRank.titleUa} (Клікніть для паспорта)` : `Sommelier Rank: ${sommelierRank.titleEn}`}
               >
                 <span className="text-sm group-hover:scale-110 transition-transform">{sommelierRank.badge}</span>
@@ -145,7 +145,7 @@ export const Navbar: React.FC<Props> = ({
                   playClinkSound();
                   onOpenPWA();
                 }}
-                className="px-2 sm:px-2.5 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-300 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm group"
+                className="p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-300 text-xs font-bold transition-all flex items-center gap-1 cursor-pointer shadow-sm group shrink-0"
                 title={isUa ? 'Встановити додаток на телефон (PWA)' : 'Install as app on phone (PWA)'}
               >
                 <Smartphone className="w-3.5 h-3.5 text-emerald-400 group-hover:scale-110 transition-transform" />
@@ -161,11 +161,11 @@ export const Navbar: React.FC<Props> = ({
                 playClinkSound();
                 onOpenSearch();
               }}
-              className="px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/80 text-zinc-200 hover:text-amber-400 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm group"
+              className="p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/80 text-zinc-200 hover:text-amber-400 text-xs font-bold transition-all flex items-center gap-1 cursor-pointer shadow-sm group shrink-0"
               title={isUa ? 'Загальний пошук (Ctrl+K)' : 'Global search'}
             >
               <Search className="w-3.5 h-3.5 text-amber-400 group-hover:scale-110 transition-transform" />
-              <span className="hidden sm:inline text-[11px] font-['Unbounded'] font-bold">
+              <span className="hidden md:inline text-[11px] font-['Unbounded'] font-bold">
                 {isUa ? 'Пошук' : 'Search'}
               </span>
             </button>
@@ -177,7 +177,7 @@ export const Navbar: React.FC<Props> = ({
                   playClinkSound();
                   onOpenAuthModal();
                 }}
-                className="p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 hover:border-amber-500/50 text-zinc-200 hover:text-amber-300 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+                className="p-1 sm:px-2 sm:py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 hover:border-amber-500/50 text-zinc-200 hover:text-amber-300 text-xs font-bold transition-all flex items-center gap-1 cursor-pointer shadow-sm shrink-0"
                 title={currentUser ? (isUa ? `Профіль: ${currentUser.name}` : `Profile: ${currentUser.name}`) : (isUa ? 'Увійти через Google' : 'Sign in with Google')}
               >
                 {currentUser?.picture ? (
@@ -187,7 +187,7 @@ export const Navbar: React.FC<Props> = ({
                     className="w-5 h-5 rounded-full object-cover border border-emerald-400"
                   />
                 ) : (
-                  <User className="w-4 h-4 text-amber-400" />
+                  <User className="w-3.5 h-3.5 text-amber-400" />
                 )}
                 <span className="hidden xl:inline text-[11px] font-['Unbounded'] font-bold max-w-[100px] truncate">
                   {currentUser ? currentUser.name.split(' ')[0] : (isUa ? 'Вхід' : 'Login')}
@@ -201,19 +201,13 @@ export const Navbar: React.FC<Props> = ({
                 playClinkSound();
                 onToggleTheme();
               }}
-              className="p-2 sm:px-2.5 sm:py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/80 text-amber-400 hover:text-amber-300 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+              className="p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/80 text-amber-400 hover:text-amber-300 text-xs font-bold transition-all flex items-center gap-1 cursor-pointer shadow-sm shrink-0"
               title={isUa ? (theme === 'dark' ? 'Увімкнути світлу тему' : 'Увімкнути темну тему') : (theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme')}
             >
               {theme === 'dark' ? (
-                <>
-                  <Sun className="w-4 h-4 text-amber-400 animate-spin-slow" />
-                  <span className="hidden lg:inline text-[11px] text-zinc-300 font-mono">{isUa ? 'Світла' : 'Light'}</span>
-                </>
+                <Sun className="w-3.5 h-3.5 text-amber-400 animate-spin-slow" />
               ) : (
-                <>
-                  <Moon className="w-4 h-4 text-amber-400" />
-                  <span className="hidden lg:inline text-[11px] text-zinc-700 font-mono">{isUa ? 'Темна' : 'Dark'}</span>
-                </>
+                <Moon className="w-3.5 h-3.5 text-amber-400" />
               )}
             </button>
 
@@ -223,10 +217,11 @@ export const Navbar: React.FC<Props> = ({
                 playClinkSound();
                 onOpenJournal();
               }}
-              className="bg-amber-500 hover:bg-amber-400 text-black px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl font-black text-xs flex items-center gap-1.5 shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-all cursor-pointer font-['Unbounded']"
+              className="bg-amber-500 hover:bg-amber-400 text-black px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl font-black text-xs flex items-center gap-1 shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-all cursor-pointer font-['Unbounded'] shrink-0"
+              title={isUa ? 'Мій журнал та улюблені' : 'My Journal & Favorites'}
             >
               <Sparkles className="w-3.5 h-3.5" />
-              <span className="hidden md:inline">{isUa ? 'МІЙ ЖУРНАЛ' : 'MY JOURNAL'}</span>
+              <span className="hidden sm:inline">{isUa ? 'ЖУРНАЛ' : 'JOURNAL'}</span>
               {journalCount > 0 && (
                 <span className="bg-black text-amber-400 px-1.5 py-0.2 rounded-full text-[10px] font-mono font-black">
                   {journalCount}
@@ -234,22 +229,22 @@ export const Navbar: React.FC<Props> = ({
               )}
             </button>
 
-            {/* Quick SOS Hangover button */}
+            {/* Quick SOS Hangover button (hidden on mobile, visible on lg) */}
             <button
               onClick={() => handleNavClick('hangover')}
-              className="px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-300 hover:text-white border border-rose-500/30 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+              className="hidden lg:flex px-2.5 sm:px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-300 hover:text-white border border-rose-500/30 text-xs font-bold transition-all items-center gap-1.5 cursor-pointer shrink-0"
             >
               <HeartPulse className="w-3.5 h-3.5 text-rose-400" />
-              <span className="hidden xl:inline font-['Unbounded'] text-[11px]">
+              <span className="font-['Unbounded'] text-[11px]">
                 {isUa ? 'SOS Похмілля' : 'SOS Hangover'}
               </span>
             </button>
 
             {/* Language Switcher */}
-            <div className="flex rounded-xl bg-zinc-900 p-0.5 border border-zinc-800">
+            <div className="flex rounded-xl bg-zinc-900 p-0.5 border border-zinc-800 shrink-0">
               <button
                 onClick={() => onLanguageChange('uk')}
-                className={`px-2 py-1 rounded-lg text-xs font-bold font-mono transition-colors cursor-pointer ${
+                className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-lg text-[10px] sm:text-xs font-bold font-mono transition-colors cursor-pointer ${
                   language === 'uk'
                     ? 'bg-amber-500 text-black font-black'
                     : 'text-zinc-400 hover:text-white'
@@ -259,7 +254,7 @@ export const Navbar: React.FC<Props> = ({
               </button>
               <button
                 onClick={() => onLanguageChange('en')}
-                className={`px-2 py-1 rounded-lg text-xs font-bold font-mono transition-colors cursor-pointer ${
+                className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-lg text-[10px] sm:text-xs font-bold font-mono transition-colors cursor-pointer ${
                   language === 'en'
                     ? 'bg-amber-500 text-black font-black'
                     : 'text-zinc-400 hover:text-white'
@@ -271,8 +266,8 @@ export const Navbar: React.FC<Props> = ({
           </div>
         </div>
 
-        {/* Static Navigation Bar with All 13 Sections Fully Displayed */}
-        <nav className="flex flex-wrap items-center gap-1 sm:gap-1.5 py-2 overflow-x-auto scrollbar-none text-xs">
+        {/* Swipeable Single-Row Navigation Strip with All 13 Sections */}
+        <nav className="flex flex-nowrap items-center gap-1.5 py-2 overflow-x-auto scrollbar-none w-full max-w-full touch-pan-x select-none px-0.5">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isSelected = activeTab === item.id;

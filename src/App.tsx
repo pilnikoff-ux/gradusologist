@@ -238,7 +238,7 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0F0F12] text-zinc-100 font-['Plus_Jakarta_Sans'] selection:bg-amber-500 selection:text-black">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#0F0F12] text-zinc-100 font-['Plus_Jakarta_Sans'] selection:bg-amber-500 selection:text-black">
       {/* Top Sticky Header */}
       <Navbar
         language={language}
@@ -258,7 +258,7 @@ export function App() {
       />
 
       {/* Main Container */}
-      <main className="space-y-12 pb-24">
+      <main className="space-y-12 pb-24 w-full max-w-full overflow-x-hidden">
         {/* Interactive Bento Grid Master Hub */}
         <BentoGridHub
           language={language}

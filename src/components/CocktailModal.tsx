@@ -54,23 +54,23 @@ export const CocktailModal: React.FC<Props> = ({
   const freshVal = cocktail.flavorProfile?.refreshingness ?? cocktail.flavorProfile?.refreshing ?? 4;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md overflow-y-auto animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-black/85 backdrop-blur-md overflow-y-auto animate-fadeIn">
       <div
-        className="relative w-full max-w-2xl rounded-3xl bg-stone-900 border border-stone-800 p-5 sm:p-8 shadow-2xl shadow-black/80 my-6 max-h-[90vh] overflow-y-auto"
+        className="relative w-full max-w-2xl rounded-3xl bg-stone-900 border border-stone-800 p-4 sm:p-8 shadow-2xl shadow-black/80 my-auto max-h-[92vh] overflow-y-auto min-w-0"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 rounded-full bg-stone-950/80 hover:bg-stone-800 text-stone-400 hover:text-white border border-stone-800 transition-colors z-20 cursor-pointer"
+          className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 rounded-full bg-stone-950/80 hover:bg-stone-800 text-stone-400 hover:text-white border border-stone-800 transition-colors z-20 cursor-pointer"
           aria-label="Close modal"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Top Header Card */}
-        <div className="flex flex-col sm:flex-row gap-5 mb-6">
-          <div className="w-full sm:w-48 h-48 sm:h-52 rounded-2xl overflow-hidden bg-stone-950 shrink-0 relative border border-stone-800 shadow-inner">
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 mb-5 sm:mb-6 min-w-0">
+          <div className="w-full sm:w-48 h-44 sm:h-52 rounded-2xl overflow-hidden bg-stone-950 shrink-0 relative border border-stone-800 shadow-inner">
             <img
               src={cocktail.image}
               alt={isUa ? cocktail.name : cocktail.nameEn}
@@ -88,22 +88,22 @@ export const CocktailModal: React.FC<Props> = ({
             )}
           </div>
 
-          <div className="flex-1 flex flex-col justify-center">
-            <div className="flex flex-wrap gap-2 items-center mb-2">
-              <span className="px-2.5 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[11px] font-bold uppercase tracking-wider">
+          <div className="flex-1 flex flex-col justify-center min-w-0">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2 items-center mb-2">
+              <span className="px-2.5 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider">
                 {cocktail.type}
               </span>
-              <span className="px-2.5 py-0.5 rounded-full bg-stone-950 border border-stone-800 text-stone-300 text-[11px] font-medium">
+              <span className="px-2.5 py-0.5 rounded-full bg-stone-950 border border-stone-800 text-stone-300 text-[10px] sm:text-[11px] font-medium">
                 {isUa ? (cocktail.glassware || cocktail.glass) : (cocktail.glasswareEn || cocktail.glassEn)}
               </span>
               {(cocktail.calories || cocktail.caloriesApprox) && (
-                <span className="text-xs text-stone-400 font-mono">
+                <span className="text-[11px] sm:text-xs text-stone-400 font-mono">
                   ~{cocktail.calories || cocktail.caloriesApprox} kcal
                 </span>
               )}
             </div>
 
-            <h3 className="text-2xl sm:text-3xl font-extrabold text-white font-['Unbounded'] tracking-tight">
+            <h3 className="text-xl sm:text-3xl font-extrabold text-white font-['Unbounded'] tracking-tight break-words">
               {isUa ? cocktail.name : cocktail.nameEn}
             </h3>
 
@@ -122,38 +122,38 @@ export const CocktailModal: React.FC<Props> = ({
         </div>
 
         {/* Flavor Profile Bars */}
-        <div className="p-3.5 rounded-2xl bg-stone-950/80 border border-stone-800 mb-5">
+        <div className="p-3.5 rounded-2xl bg-stone-950/80 border border-stone-800 mb-5 min-w-0">
           <h4 className="text-[11px] font-semibold text-stone-400 uppercase tracking-wider mb-2 flex items-center gap-1.5 font-['Unbounded']">
             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
             {isUa ? 'Смаковий профіль' : 'Flavor Profile'}
           </h4>
-          <div className="grid grid-cols-5 gap-2 text-center text-xs">
+          <div className="grid grid-cols-5 gap-1.5 sm:gap-2 text-center text-xs">
             <div>
-              <div className="text-[10px] text-stone-400 mb-1">{isUa ? 'Солод' : 'Sweet'}</div>
+              <div className="text-[9px] sm:text-[10px] text-stone-400 mb-1 truncate">{isUa ? 'Солод' : 'Sweet'}</div>
               <div className="h-1.5 rounded-full bg-stone-800 overflow-hidden">
                 <div className="h-full bg-amber-400" style={{ width: `${(sweetVal / 5) * 100}%` }} />
               </div>
             </div>
             <div>
-              <div className="text-[10px] text-stone-400 mb-1">{isUa ? 'Кислинка' : 'Sour'}</div>
+              <div className="text-[9px] sm:text-[10px] text-stone-400 mb-1 truncate">{isUa ? 'Кислинка' : 'Sour'}</div>
               <div className="h-1.5 rounded-full bg-stone-800 overflow-hidden">
                 <div className="h-full bg-lime-400" style={{ width: `${(sourVal / 5) * 100}%` }} />
               </div>
             </div>
             <div>
-              <div className="text-[10px] text-stone-400 mb-1">{isUa ? 'Гіркота' : 'Bitter'}</div>
+              <div className="text-[9px] sm:text-[10px] text-stone-400 mb-1 truncate">{isUa ? 'Гіркота' : 'Bitter'}</div>
               <div className="h-1.5 rounded-full bg-stone-800 overflow-hidden">
                 <div className="h-full bg-rose-500" style={{ width: `${(bitterVal / 5) * 100}%` }} />
               </div>
             </div>
             <div>
-              <div className="text-[10px] text-stone-400 mb-1">{isUa ? 'Міцність' : 'Strength'}</div>
+              <div className="text-[9px] sm:text-[10px] text-stone-400 mb-1 truncate">{isUa ? 'Міцність' : 'Strength'}</div>
               <div className="h-1.5 rounded-full bg-stone-800 overflow-hidden">
                 <div className="h-full bg-red-500" style={{ width: `${(strongVal / 5) * 100}%` }} />
               </div>
             </div>
             <div>
-              <div className="text-[10px] text-stone-400 mb-1">{isUa ? 'Свіжість' : 'Fresh'}</div>
+              <div className="text-[9px] sm:text-[10px] text-stone-400 mb-1 truncate">{isUa ? 'Свіжість' : 'Fresh'}</div>
               <div className="h-1.5 rounded-full bg-stone-800 overflow-hidden">
                 <div className="h-full bg-cyan-400" style={{ width: `${(freshVal / 5) * 100}%` }} />
               </div>

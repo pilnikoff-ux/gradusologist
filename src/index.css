@@ -1,17 +1,44 @@
 @import "tailwindcss";
 
 @layer base {
+  html {
+    overflow-x: hidden;
+    max-width: 100vw;
+    width: 100%;
+    -webkit-text-size-adjust: 100%;
+  }
+
   body {
     background-color: #0F0F12;
     color: #F4F4F5;
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     transition: background-color 0.25s ease, color 0.25s ease;
+    overflow-x: hidden;
+    max-width: 100vw;
+    width: 100%;
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+
+  #root {
+    overflow-x: hidden;
+    max-width: 100vw;
+    width: 100%;
   }
 
   body.light {
     background-color: #F8FAFC;
     color: #0F172A;
   }
+}
+
+/* Hide scrollbars for smooth touch swiping on mobile */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* ==========================================================
